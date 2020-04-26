@@ -10,14 +10,18 @@ let router = express.Router();
 
 function getToken(clientID, clientSecret) {
   const clientStr = clientID + ':' + clientSecret;
-  return fetch('https://accounts.spotify.com/api/token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': 'Basic ' + (new Buffer.alloc(clientStr.length, clientStr).toString('base64'))
-    },
-    body: 'grant_type=client_credentials'
-  })
+  return fetch(
+    'https://accounts.spotify.com/api/token',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + (
+          new Buffer.alloc(clientStr.length, clientStr).toString('base64'))
+      },
+      body: 'grant_type=client_credentials'
+    }
+  )
   .then((res) => {
     return res.json();
   })
@@ -31,12 +35,15 @@ function getToken(clientID, clientSecret) {
 }
 
 function getArtistID(artistName, token) {
-  return fetch('https://api.spotify.com/v1/search?q=' + artistName + '&type=artist', {
-    method: 'GET',
-    headers: {
-      'Authorization': 'Bearer ' + token
+  return fetch(
+    'https://api.spotify.com/v1/search?q=' + artistName + '&type=artist',
+    {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
     }
-  })
+  )
   .then((res) => {
     return res.json();
   })
@@ -48,17 +55,21 @@ function getArtistID(artistName, token) {
     return artistID;
   })
   .catch((error) => {
-    console.error('There was an error in the artist ID fetch operation: ', error);
+    console.error(
+      'There was an error in the artist ID fetch operation: ', error);
   });
 }
 
 function getRelatedArtists(artistID, token) {
-  return fetch('https://api.spotify.com/v1/artists/' + artistID + '/related-artists', {
-    method: 'GET',
-    headers: {
-      'Authorization': 'Bearer ' + token
+  return fetch(
+    'https://api.spotify.com/v1/artists/' + artistID + '/related-artists',
+    {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
     }
-  })
+  )
   .then((res) => {
     return res.json();
   })
@@ -67,7 +78,8 @@ function getRelatedArtists(artistID, token) {
     return relatedArtists;
   })
   .catch((error) => {
-    console.error('There was an error in the related artists fetch operation: ', error);
+    console.error(
+      'There was an error in the related artists fetch operation: ', error);
   });
 }
 
