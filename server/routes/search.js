@@ -22,14 +22,14 @@ function getToken(clientID, clientSecret) {
       body: 'grant_type=client_credentials'
     }
   )
-  .then(res => res.json())
-  .then((json) => {
-    const token = json.access_token;
-    return token;
-  })
-  .catch((error) => {
-    console.error('There was an error in the token fetch operation: ', error);
-  });
+    .then(res => res.json())
+    .then((json) => {
+      const token = json.access_token;
+      return token;
+    })
+    .catch((error) => {
+      console.error('There was an error in the token fetch operation: ', error);
+    });
 }
 
 function getArtistID(artistName, token) {
@@ -42,18 +42,18 @@ function getArtistID(artistName, token) {
       }
     }
   )
-  .then(res => res.json())
-  .then((json) => {
-    const artists = json.artists;
-    const items = artists.items;
-    const artistID = items[0].id;
+    .then(res => res.json())
+    .then((json) => {
+      const artists = json.artists;
+      const items = artists.items;
+      const artistID = items[0].id;
 
-    return artistID;
-  })
-  .catch((error) => {
-    console.error(
-      'There was an error in the artist ID fetch operation: ', error);
-  });
+      return artistID;
+    })
+    .catch((error) => {
+      console.error(
+        'There was an error in the artist ID fetch operation: ', error);
+    });
 }
 
 function getRelatedArtists(artistID, token) {
@@ -66,18 +66,18 @@ function getRelatedArtists(artistID, token) {
       }
     }
   )
-  .then(res => res.json())
-  .then((json) => {
-    const relatedArtists = json.artists;
-    return relatedArtists;
-  })
-  .catch((error) => {
-    console.error(
-      'There was an error in the related artists fetch operation: ', error);
-  });
+    .then(res => res.json())
+    .then((json) => {
+      const relatedArtists = json.artists;
+      return relatedArtists;
+    })
+    .catch((error) => {
+      console.error(
+        'There was an error in the related artists fetch operation: ', error);
+    });
 }
 
-router.param('artist', async function(req, res, next, artistName) {
+router.param('artist', async function (req, res, next, artistName) {
   const token = await getToken(clientID, clientSecret);
   const artistID = await getArtistID(artistName, token);
   const relatedArtists = await getRelatedArtists(artistID, token);
@@ -87,7 +87,7 @@ router.param('artist', async function(req, res, next, artistName) {
 });
 
 /* GET home page. */
-router.get('/:artist', function(req, res, next) {
+router.get('/:artist', function (req, res, next) {
   res.send({
     'relatedArtists': req.relatedArtists
   });

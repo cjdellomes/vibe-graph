@@ -2,10 +2,16 @@ import React from 'react';
 import './App.css';
 import ArtistForm from './components/ArtistForm';
 
-function App() {
-  return (
-    <ArtistForm />
-  );
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <ArtistForm />
+    );
+  }
 }
 
 export default App;
