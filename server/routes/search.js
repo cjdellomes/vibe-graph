@@ -22,9 +22,7 @@ function getToken(clientID, clientSecret) {
       body: 'grant_type=client_credentials'
     }
   )
-  .then((res) => {
-    return res.json();
-  })
+  .then(res => res.json())
   .then((json) => {
     const token = json.access_token;
     return token;
@@ -44,9 +42,7 @@ function getArtistID(artistName, token) {
       }
     }
   )
-  .then((res) => {
-    return res.json();
-  })
+  .then(res => res.json())
   .then((json) => {
     const artists = json.artists;
     const items = artists.items;
@@ -70,9 +66,7 @@ function getRelatedArtists(artistID, token) {
       }
     }
   )
-  .then((res) => {
-    return res.json();
-  })
+  .then(res => res.json())
   .then((json) => {
     const relatedArtists = json.artists;
     return relatedArtists;

@@ -15,14 +15,14 @@ class ArtistForm extends React.Component {
 
     handleSubmit(event) {
         console.log('Artist submitted: ' + this.state.value);
-        fetch('http://localhost:8888/search/' + this.state.value)
+        fetch('http://localhost:3001/search/' + encodeURIComponent(this.state.value))
             .then(res => res.json())
             .then(
                 (result) => {
                     console.log(result);
                     this.setState({
                         isLoaded: true,
-                        items: result.items
+                        relatedArtists: result.relatedArtists
                     });
                 },
                 (error) => {
