@@ -22,6 +22,7 @@ class ArtistForm extends React.Component {
                     console.log(result);
                     this.setState({
                         isLoaded: true,
+                        artist: result.artist,
                         relatedArtists: result.relatedArtists
                     });
                 },

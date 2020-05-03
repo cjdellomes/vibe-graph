@@ -32,9 +32,9 @@ function getToken(clientID, clientSecret) {
     });
 }
 
-function getArtistID(artistName, token) {
+function getArtist(artistName, token) {
   return fetch(
-    'https://api.spotify.com/v1/search?q=' + artistName + '&type=artist',
+    'https://api.spotify.com/v1/search?q=' + artistName + '&type=artist&limit=1',
     {
       method: 'GET',
       headers: {
@@ -46,9 +46,9 @@ function getArtistID(artistName, token) {
     .then((json) => {
       const artists = json.artists;
       const items = artists.items;
-      const artistID = items[0].id;
+      const artist = items[0];
 
-      return artistID;
+      return artist;
     })
     .catch((error) => {
       console.error(
@@ -79,9 +79,11 @@ function getRelatedArtists(artistID, token) {
 
 router.param('artist', async function (req, res, next, artistName) {
   const token = await getToken(clientID, clientSecret);
-  const artistID = await getArtistID(artistName, token);
+  const artist = await getArtist(artistName, token);
+  const artistID = artist.id;
   const relatedArtists = await getRelatedArtists(artistID, token);
 
+  req.artist = artist;
   req.relatedArtists = relatedArtists;
   return next();
 });
@@ -89,6 +91,7 @@ router.param('artist', async function (req, res, next, artistName) {
 /* GET home page. */
 router.get('/:artist', function (req, res, next) {
   res.send({
+    'artist' : req.artist,
     'relatedArtists': req.relatedArtists
   });
 });
