@@ -13,8 +13,8 @@ class ArtistForm extends React.Component {
     }
 
     handleSubmit(event) {
-        console.log('Artist submitted: ' + this.props.artist);
-        this.props.onArtistSubmit(this.props.artist);
+        console.log('Artist submitted: ' + this.props.searchValue);
+        this.props.onArtistSubmit(this.props.searchValue);
         event.preventDefault();
     }
 
@@ -23,7 +23,7 @@ class ArtistForm extends React.Component {
             <form onSubmit={this.handleSubmit}>
                 <label>
                     Artist:
-                    <input type="text" value={this.props.artist} onChange={this.handleChange} />
+                    <input type="text" value={this.props.searchValue} onChange={this.handleChange} />
                 </label>
                 <input type="submit" onSubmit={this.handleSubmit} />
             </form>
