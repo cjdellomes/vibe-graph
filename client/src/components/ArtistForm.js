@@ -3,19 +3,19 @@ import React from 'react';
 class ArtistForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { value: '' };
+        this.state = { searchValue: '' };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange(event) {
-        this.setState({ value: event.target.value });
+        this.setState({ searchValue: event.target.value });
     }
 
     handleSubmit(event) {
-        console.log('Artist submitted: ' + this.state.value);
-        fetch('http://localhost:3001/search/' + encodeURIComponent(this.state.value))
+        console.log('Artist submitted: ' + this.state.searchValue);
+        fetch('http://localhost:3001/search/' + encodeURIComponent(this.state.searchValue))
             .then(res => res.json())
             .then(
                 (result) => {
@@ -23,7 +23,7 @@ class ArtistForm extends React.Component {
                     this.setState({
                         isLoaded: true,
                         artist: result.artist,
-                        relatedArtists: result.relatedArtists
+                        relatedArtists: result.related_artists
                     });
                 },
                 (error) => {
@@ -41,7 +41,7 @@ class ArtistForm extends React.Component {
             <form onSubmit={this.handleSubmit}>
                 <label>
                     Artist:
-                    <input type="text" value={this.state.value} onChange={this.handleChange} />
+                    <input type="text" value={this.state.searchValue} onChange={this.handleChange} />
                 </label>
                 <input type="submit" onSubmit={this.handleSubmit} />
             </form>

@@ -92,7 +92,7 @@ router.param('artist', async function (req, res, next, artistName) {
 router.get('/:artist', function (req, res, next) {
   res.send({
     'artist' : req.artist,
-    'relatedArtists': req.relatedArtists
+    'related_artists': req.relatedArtists
   });
 });
 
