@@ -1,19 +1,7 @@
 import React from 'react';
 import './App.css';
 import ArtistForm from './components/ArtistForm';
-import {Sigma, RandomizeNodePositions, RelativeSize} from 'react-sigma';
-
-class UpdateNodeProps extends React.Component {
-  componentWillReceiveProps({sigma, nodes}) {
-    console.log(this.props);
-    sigma.graph.nodes().forEach(n => {
-      let updated = nodes.find(e => e.id === n.id);
-      Object.assign(n, updated);
-    });
-  }
-
-  render = () => null;
-}
+import Graph from 'react-graph-vis';
 
 class App extends React.Component {
   constructor(props) {
@@ -26,13 +14,22 @@ class App extends React.Component {
       artist: {},
       relatedArtists: [],
       graph: {
-        nodes: [
-          {id:'source', label:'Alice'},
-          {id:'n0', label:'Rabbit'}
-        ],
-        edges: [
-          {id:'e0',source:'source',target:'n0',label:'SEES'}
-        ]
+        nodes: [],
+        edges: []
+      }
+    };
+    this.options = {
+      layout: {
+        hierarchical: false
+      },
+      edges: {
+        color: "#000000"
+      },
+      height: "500px"
+    };
+    this.events = {
+      select: function(event) {
+        let {nodes, edges} = event;
       }
     };
   }
@@ -71,13 +68,12 @@ class App extends React.Component {
     for (let i = 0; i < this.state.relatedArtists.length; i++) {
       let relatedArtist = this.state.relatedArtists[i];
       let relatedArtistNode = {
-        id: 'n' + i,
+        id: i,
         label: relatedArtist.name
       };
       let relatedArtistEdge = {
-        id: 'e' + i,
-        source: 'source',
-        target: 'n' + i
+        from: 'source',
+        to: i
       };
       nodes.push(relatedArtistNode);
       edges.push(relatedArtistEdge);
@@ -95,14 +91,12 @@ class App extends React.Component {
     return (
       <div>
         <ArtistForm searchValue={this.state.searchValue} onArtistChange={this.handleArtistChange} onArtistSubmit={this.handleArtistSubmit}/>
-        <Sigma 
-          style={{maxWidth: 'inherit', height: '600px', borderStyle: 'groove'}}
+        <Graph
           graph={this.state.graph}
-          settings={{drawEdges: true, clone: false}}>
-          <UpdateNodeProps nodes={this.state.graph.nodes}/>
-          <RelativeSize initialSize={15}/>
-          <RandomizeNodePositions/>
-        </Sigma>
+          options={this.state.options}
+          events={this.state.events}
+          style={{height: "800px", width: "500px"}}
+        />
       </div>
     );
   }
