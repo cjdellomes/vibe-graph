@@ -24,12 +24,11 @@ class App extends React.Component {
       },
       edges: {
         color: "#000000"
-      },
-      height: "500px"
+      }
     };
     this.events = {
       select: function(event) {
-        let {nodes, edges} = event;
+        console.log(event);
       }
     };
   }
@@ -44,11 +43,13 @@ class App extends React.Component {
       .then(
           (result) => {
               console.log(result);
+              let artist = result.artist;
+              let relatedArtists = result.related_artists;
               this.setState({
-                  artist: result.artist,
-                  relatedArtists: result.related_artists
+                  artist: artist,
+                  relatedArtists: relatedArtists
               });
-              this.updateGraph();
+              this.updateGraph(this.state.graph, artist, relatedArtists);
           },
           (error) => {
               console.log(error);
@@ -56,33 +57,40 @@ class App extends React.Component {
       );
   }
 
-  updateGraph() {
+  updateGraph(graph, artist, relatedArtists) {
     let nodes = [];
     let edges = [];
     let artistNode = {
-      id: 'source',
-      label: this.state.artist.name
+      id: artist.name,
+      label: artist.name,
+      shape: "circularImage",
+      image: artist.images[2].url
     };
     nodes.push(artistNode);
     
-    for (let i = 0; i < this.state.relatedArtists.length; i++) {
-      let relatedArtist = this.state.relatedArtists[i];
+    for (let i = 0; i < relatedArtists.length; i++) {
+      let relatedArtist = relatedArtists[i];
+
       let relatedArtistNode = {
-        id: i,
-        label: relatedArtist.name
+        id: relatedArtist.name,
+        label: relatedArtist.name,
+        shape: "circularImage",
+        image: relatedArtist.images[2].url
       };
+
       let relatedArtistEdge = {
-        from: 'source',
-        to: i
+        from: artist.name,
+        to: relatedArtist.name
       };
+
       nodes.push(relatedArtistNode);
       edges.push(relatedArtistEdge);
     }
 
-    let graph = {
+    graph = {
       nodes,
       edges
-    }
+    };
 
     this.setState({graph});
   }
@@ -93,9 +101,9 @@ class App extends React.Component {
         <ArtistForm searchValue={this.state.searchValue} onArtistChange={this.handleArtistChange} onArtistSubmit={this.handleArtistSubmit}/>
         <Graph
           graph={this.state.graph}
-          options={this.state.options}
-          events={this.state.events}
-          style={{height: "800px", width: "500px"}}
+          options={this.options}
+          events={this.events}
+          style={{height: "800px", width: "800px", border: "1px solid lightgray"}}
         />
       </div>
     );
