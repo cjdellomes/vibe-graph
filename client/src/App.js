@@ -25,11 +25,29 @@ class App extends React.Component {
 
     this.options = {
       layout: {
-        hierarchical: false,
-        randomSeed: 34
+        hierarchical: false
       },
       edges: {
-        color: "#000000"
+        width: 0.15,
+        color: { inherit: "from" },
+        smooth: {
+          type: "continuous"
+        }
+      },
+      physics: {
+        enabled: true,
+        repulsion: {
+            centralGravity: 0.0,
+            springLength: 50,
+            springConstant: 0.01,
+            nodeDistance: 200,
+            damping: 0.09
+        },
+        solver: 'repulsion'
+      },
+      interaction: {
+        hover: true,
+        tooltipDelay: 200,
       }
     };
 
@@ -68,15 +86,25 @@ class App extends React.Component {
       );
   }
 
+  getArtistImageOrDefault(artist, defaultVal) {
+    if (artist.images.length > 0) {
+      return artist.images[artist.images.length - 1].url;
+    }
+    return defaultVal;
+  }
+
   updateGraph(graph, artist, relatedArtists) {
     let nodes = graph.nodes.slice();
     let edges = graph.edges.slice();
 
+    let artistImage = this.getArtistImageOrDefault(artist, undefined);
+
     let artistNode = {
       id: artist.name,
       label: artist.name,
+      title: artist.name,
       shape: "circularImage",
-      image: artist.images[2].url
+      image: artistImage
     };
 
     if (!this.state.drawnNodes.has(artist.name)) {
@@ -91,11 +119,14 @@ class App extends React.Component {
     for (let i = 0; i < relatedArtists.length; i++) {
       let relatedArtist = relatedArtists[i];
 
+      let relatedArtistImage = this.getArtistImageOrDefault(relatedArtist, undefined);
+
       let relatedArtistNode = {
         id: relatedArtist.name,
         label: relatedArtist.name,
+        title: relatedArtist.name,
         shape: "circularImage",
-        image: relatedArtist.images[relatedArtist.images.length - 1].url,
+        image: relatedArtistImage,
       };
 
       let relatedArtistEdge = {
