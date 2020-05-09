@@ -95,7 +95,7 @@ class App extends React.Component {
         id: relatedArtist.name,
         label: relatedArtist.name,
         shape: "circularImage",
-        image: relatedArtist.images[2].url,
+        image: relatedArtist.images[relatedArtist.images.length - 1].url,
       };
 
       let relatedArtistEdge = {
