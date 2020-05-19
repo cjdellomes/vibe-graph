@@ -108,10 +108,14 @@ class App extends React.Component {
   }
 
   updateGraph(graph, artist, relatedArtists) {
+    if (artist === null || artist === undefined) {
+      return;
+    }
+
     let nodes = graph.nodes.slice();
     let edges = graph.edges.slice();
 
-    let artistImage = this.getArtistImageOrDefault(artist, undefined);
+    let artistImage = this.getArtistImageOrDefault(artist, null);
 
     let artistNode = {
       id: artist.name,
@@ -129,34 +133,36 @@ class App extends React.Component {
     if (!this.state.loadedArtists.has(artist.name)) {
       this.state.loadedArtists.add(artist.name);
     }
-    
-    for (let i = 0; i < relatedArtists.length; i++) {
-      let relatedArtist = relatedArtists[i];
 
-      let relatedArtistImage = this.getArtistImageOrDefault(relatedArtist, undefined);
-
-      let relatedArtistNode = {
-        id: relatedArtist.name,
-        label: relatedArtist.name,
-        title: relatedArtist.name,
-        shape: "circularImage",
-        image: relatedArtistImage,
-      };
-
-      let relatedArtistEdge = {
-        id: artist.name + ':' + relatedArtist.name,
-        from: artist.name,
-        to: relatedArtist.name
-      };
-
-      if (!this.state.drawnNodes.has(relatedArtist.name)) {
-        this.state.drawnNodes.add(relatedArtist.name);
-        nodes.push(relatedArtistNode);
-      }
-
-      if (!this.state.drawnEdges.has(relatedArtistEdge.id)) {
-        this.state.drawnEdges.add(relatedArtistEdge.id);
-        edges.push(relatedArtistEdge);
+    if (relatedArtists !== undefined && relatedArtist !== null) {
+      for (let i = 0; i < relatedArtists.length; i++) {
+        let relatedArtist = relatedArtists[i];
+  
+        let relatedArtistImage = this.getArtistImageOrDefault(relatedArtist, null);
+  
+        let relatedArtistNode = {
+          id: relatedArtist.name,
+          label: relatedArtist.name,
+          title: relatedArtist.name,
+          shape: "circularImage",
+          image: relatedArtistImage,
+        };
+  
+        let relatedArtistEdge = {
+          id: artist.name + ':' + relatedArtist.name,
+          from: artist.name,
+          to: relatedArtist.name
+        };
+  
+        if (!this.state.drawnNodes.has(relatedArtist.name)) {
+          this.state.drawnNodes.add(relatedArtist.name);
+          nodes.push(relatedArtistNode);
+        }
+  
+        if (!this.state.drawnEdges.has(relatedArtistEdge.id)) {
+          this.state.drawnEdges.add(relatedArtistEdge.id);
+          edges.push(relatedArtistEdge);
+        }
       }
     }
 

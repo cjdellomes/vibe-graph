@@ -31,7 +31,7 @@ class SpotifyController {
       
     static getArtist = function(artistName, token) {
         return fetch(
-            'https://api.spotify.com/v1/search?q=' + artistName + '&type=artist&limit=1',
+            `https://api.spotify.com/v1/search?q=${artistName}&type=artist&limit=1`,
           {
             method: 'GET',
             headers: {
@@ -43,7 +43,7 @@ class SpotifyController {
         .then((json) => {
             const artists = json.artists;
             const items = artists.items;
-            const artist = items[0];
+            const artist = items.length > 0 ? items[0] : null;
       
             return artist;
         })
@@ -55,7 +55,7 @@ class SpotifyController {
       
     static getRelatedArtists = function(artistID, token) {
         return fetch(
-            'https://api.spotify.com/v1/artists/' + artistID + '/related-artists',
+            `https://api.spotify.com/v1/artists/${artistID}/related-artists`,
             {
                 method: 'GET',
                 headers: {
