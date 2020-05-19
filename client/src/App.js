@@ -8,6 +8,7 @@ class App extends React.Component {
     super(props);
     this.handleArtistChange = this.handleArtistChange.bind(this);
     this.handleArtistSubmit = this.handleArtistSubmit.bind(this);
+    this.handleGraphReset = this.handleGraphReset.bind(this);
     this.handleNodeClick = this.handleNodeClick.bind(this);
     this.updateGraph = this.updateGraph.bind(this);
     this.drawRelatedArtists = this.drawRelatedArtists.bind(this);
@@ -62,6 +63,19 @@ class App extends React.Component {
 
   handleArtistSubmit(searchValue) {
     this.drawRelatedArtists(searchValue);
+  }
+
+  handleGraphReset() {
+    this.setState({
+      searchValue: '',
+      graph: {
+        nodes: [],
+        edges: []
+      },
+      drawnNodes: new Set(),
+      drawnEdges: new Set(),
+      loadedArtists: new Set(),
+    });
   }
 
   handleNodeClick(event) {
@@ -157,12 +171,12 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <ArtistForm searchValue={this.state.searchValue} onArtistChange={this.handleArtistChange} onArtistSubmit={this.handleArtistSubmit}/>
+        <ArtistForm searchValue={this.state.searchValue} onArtistChange={this.handleArtistChange} onArtistSubmit={this.handleArtistSubmit} onGraphReset={this.handleGraphReset}/>
         <Graph
           graph={this.state.graph}
           options={this.options}
           events={this.events}
-          style={{height: "800px", width: "800px", border: "1px solid lightgray"}}
+          style={{height: "800px", width: "1800px", border: "1px solid lightgray"}}
         />
       </div>
     );
