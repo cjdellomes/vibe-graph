@@ -134,7 +134,7 @@ class App extends React.Component {
       this.state.loadedArtists.add(artist.name);
     }
 
-    if (relatedArtists !== undefined && relatedArtist !== null) {
+    if (relatedArtists !== undefined && relatedArtists !== null) {
       for (let i = 0; i < relatedArtists.length; i++) {
         let relatedArtist = relatedArtists[i];
   

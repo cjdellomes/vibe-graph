@@ -7,6 +7,7 @@ const cors = require('cors');
 
 const indexRouter = require('./routes/index');
 const searchRouter = require('./routes/search');
+const relatedArtistsRouter = require('./routes/relatedArtists');
 
 let app = express();
 
@@ -19,6 +20,7 @@ app.use(cors());
 
 app.use('/', indexRouter);
 app.use('/search', searchRouter);
+app.use('/related-artists', relatedArtistsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
