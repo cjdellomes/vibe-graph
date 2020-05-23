@@ -30,8 +30,9 @@ class SpotifyController {
     }
 
     static searchArtist = function(artistName, token) {
+        const encodedArtistName = encodeURIComponent(artistName);
         return fetch(
-            `https://api.spotify.com/v1/search?q=${artistName}&type=artist`,
+            `https://api.spotify.com/v1/search?q=${encodedArtistName}&type=artist`,
             {
                 method: 'GET',
                 headers: {
@@ -52,8 +53,9 @@ class SpotifyController {
     }
       
     static getFirstArtist = function(artistName, token) {
+        const encodedArtistName = encodeURIComponent(artistName);
         return fetch(
-            `https://api.spotify.com/v1/search?q=${artistName}&type=artist&limit=1`,
+            `https://api.spotify.com/v1/search?q=${encodedArtistName}&type=artist&limit=1`,
             {
                 method: 'GET',
                 headers: {
