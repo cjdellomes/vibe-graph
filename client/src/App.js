@@ -25,6 +25,7 @@ class App extends React.Component {
     };
 
     this.options = {
+      autoresize: true,
       layout: {
         hierarchical: false
       },
@@ -176,14 +177,18 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-        <ArtistForm searchValue={this.state.searchValue} onArtistChange={this.handleArtistChange} onArtistSubmit={this.handleArtistSubmit} onGraphReset={this.handleGraphReset}/>
-        <Graph
-          graph={this.state.graph}
-          options={this.options}
-          events={this.events}
-          style={{height: "800px", width: "1800px", border: "1px solid lightgray"}}
-        />
+      <div className="container">
+        <div className="form-box">
+          <ArtistForm searchValue={this.state.searchValue} onArtistChange={this.handleArtistChange} onArtistSubmit={this.handleArtistSubmit} onGraphReset={this.handleGraphReset}/>
+        </div>
+        <div className="canvas-box">
+          <Graph
+            graph={this.state.graph}
+            options={this.options}
+            events={this.events}
+            style={{width:"99%", height: "99%", border: "1px solid lightgray"}}
+          />
+        </div>
       </div>
     );
   }
