@@ -79,19 +79,19 @@ class App extends React.Component {
   }
 
   handleNodeClick(event) {
-    let artist = event.nodes[0];
+    const artist = event.nodes[0];
     if (!this.state.loadedArtists.has(artist)) {
       this.drawRelatedArtists(artist);
     }
   }
 
-  drawRelatedArtists(artist) {
-    fetch('http://localhost:3001/search/' + encodeURIComponent(artist))
+  drawRelatedArtists(artistName) {
+    fetch('http://localhost:3001/search/' + encodeURIComponent(artistName))
       .then(res => res.json())
       .then(
           (result) => {
-              let artist = result.artist;
-              let relatedArtists = result.related_artists;
+              const artist = result.artist;
+              const relatedArtists = result.related_artists;
               this.updateGraph(this.state.graph, artist, relatedArtists);
           },
           (error) => {
@@ -115,7 +115,7 @@ class App extends React.Component {
     let nodes = graph.nodes.slice();
     let edges = graph.edges.slice();
 
-    let artistImage = this.getArtistImageOrDefault(artist, null);
+    const artistImage = this.getArtistImageOrDefault(artist, null);
 
     let artistNode = {
       id: artist.name,
@@ -125,20 +125,20 @@ class App extends React.Component {
       image: artistImage
     };
 
-    if (!this.state.drawnNodes.has(artist.name)) {
-      this.state.drawnNodes.add(artist.name);
+    if (!this.state.drawnNodes.has(artistNode.id)) {
+      this.state.drawnNodes.add(artistNode.id);
       nodes.push(artistNode);
     }
 
-    if (!this.state.loadedArtists.has(artist.name)) {
-      this.state.loadedArtists.add(artist.name);
+    if (!this.state.loadedArtists.has(artistNode.id)) {
+      this.state.loadedArtists.add(artistNode.id);
     }
 
     if (relatedArtists !== undefined && relatedArtists !== null) {
       for (let i = 0; i < relatedArtists.length; i++) {
-        let relatedArtist = relatedArtists[i];
+        const relatedArtist = relatedArtists[i];
   
-        let relatedArtistImage = this.getArtistImageOrDefault(relatedArtist, null);
+        const relatedArtistImage = this.getArtistImageOrDefault(relatedArtist, null);
   
         let relatedArtistNode = {
           id: relatedArtist.name,
@@ -148,7 +148,7 @@ class App extends React.Component {
           image: relatedArtistImage,
         };
   
-        let relatedArtistEdge = {
+        const relatedArtistEdge = {
           id: artist.name + ':' + relatedArtist.name,
           from: artist.name,
           to: relatedArtist.name
@@ -166,12 +166,12 @@ class App extends React.Component {
       }
     }
 
-    graph = {
-      nodes,
-      edges
-    };
-
-    this.setState({graph});
+    this.setState({
+      graph: {
+        nodes: nodes,
+        edges: edges
+      }
+    });
   }
 
   render() {
