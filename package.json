@@ -2,7 +2,6 @@
   "name": "vibe-graph",
   "version": "1.0.0",
   "description": "Web app for visualizing network of Spotify related artists",
-  "main": "config.js",
   "dependencies": {
     "argparse": "^1.0.10",
     "cli-cursor": "^3.1.0",
