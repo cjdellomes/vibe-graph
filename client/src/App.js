@@ -117,7 +117,7 @@ class App extends React.Component {
 
     const artistImage = this.getArtistImageOrDefault(artist, null);
 
-    let artistNode = {
+    const artistNode = {
       id: artist.name,
       label: artist.name,
       title: artist.name,
@@ -140,7 +140,7 @@ class App extends React.Component {
   
         const relatedArtistImage = this.getArtistImageOrDefault(relatedArtist, null);
   
-        let relatedArtistNode = {
+        const relatedArtistNode = {
           id: relatedArtist.name,
           label: relatedArtist.name,
           title: relatedArtist.name,
