@@ -28,16 +28,38 @@ class SpotifyController {
             console.error('There was an error in the token fetch operation: ', error);
         });
     }
+
+    static searchArtist = function(artistName, token) {
+        return fetch(
+            `https://api.spotify.com/v1/search?q=${artistName}&type=artist`,
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            }
+        )
+        .then((res => res.json))
+        .then((json) => {
+            const artists = json.artists.items;
+
+            return artists;
+        })
+        .catch((error) => {
+            console.error(
+                'There was an error in the artist search fetch operation: ', error);
+        });
+    }
       
     static getArtist = function(artistName, token) {
         return fetch(
             `https://api.spotify.com/v1/search?q=${artistName}&type=artist&limit=1`,
-          {
-            method: 'GET',
-            headers: {
-              'Authorization': 'Bearer ' + token
+            {
+                method: 'GET',
+                headers: {
+                'Authorization': 'Bearer ' + token
+                }
             }
-          }
         )
         .then(res => res.json())
         .then((json) => {
@@ -49,7 +71,7 @@ class SpotifyController {
         })
         .catch((error) => {
             console.error(
-                'There was an error in the artist ID fetch operation: ', error);
+                'There was an error in the artist fetch operation: ', error);
         });
     }
       
