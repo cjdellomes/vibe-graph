@@ -51,7 +51,7 @@ class SpotifyController {
         });
     }
       
-    static getArtist = function(artistName, token) {
+    static getFirstArtist = function(artistName, token) {
         return fetch(
             `https://api.spotify.com/v1/search?q=${artistName}&type=artist&limit=1`,
             {
@@ -71,7 +71,26 @@ class SpotifyController {
         })
         .catch((error) => {
             console.error(
-                'There was an error in the artist fetch operation: ', error);
+                'There was an error in the first artist fetch operation: ', error);
+        });
+    }
+
+    static getArtist = function(artistID, token) {
+        return fetch(
+            `https://api.spotify.com/v1/artists/${artistID}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            }
+        )
+        .then(res => res.json())
+        .then((json) => {
+            return json;
+        })
+        .catch((error) => {
+            console.error('There was an error in the artist fetch operation: ', error);
         });
     }
       

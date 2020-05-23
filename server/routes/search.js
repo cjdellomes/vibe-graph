@@ -5,7 +5,7 @@ let router = express.Router();
 
 router.param('artist', async function (req, res, next, artistName) {
   const token = await spotify.getToken();
-  const artist = await spotify.getArtist(artistName, token);
+  const artist = await spotify.getFirstArtist(artistName, token);
   req.artist = artist;
 
   if (artist === undefined || artist === null) {
