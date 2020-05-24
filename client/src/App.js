@@ -12,8 +12,8 @@ class App extends React.Component {
     this.handleNodeClick = this.handleNodeClick.bind(this);
     this.getArtistNode = this.getArtistNode.bind(this);
     this.getRelatedArtistEdge = this.getRelatedArtistEdge.bind(this);
+    this.addArtistToGraph = this.addArtistToGraph.bind(this);
     this.addRelatedArtistsToGraph = this.addRelatedArtistsToGraph.bind(this);
-    this.updateGraph = this.updateGraph.bind(this);
     this.drawRelatedArtists = this.drawRelatedArtists.bind(this);
 
     this.state = {
@@ -66,7 +66,7 @@ class App extends React.Component {
   }
 
   handleArtistSubmit(searchValue) {
-    this.drawRelatedArtists(searchValue);
+    this.drawArtistAndRelatedArtists(searchValue);
   }
 
   handleGraphReset() {
@@ -83,21 +83,36 @@ class App extends React.Component {
   }
 
   handleNodeClick(event) {
-    const artist = event.nodes[0];
-    if (!this.state.loadedArtists.has(artist)) {
-      this.drawRelatedArtists(artist);
-      this.state.loadedArtists.add(artist.name);
+    const artistNodeID = event.nodes[0];
+    if (!this.state.loadedArtists.has(artistNodeID)) {
+      this.drawRelatedArtists(artistNodeID);
+      this.state.loadedArtists.add(artistNodeID);
     }
   }
 
-  drawRelatedArtists(artistName) {
+  drawArtistAndRelatedArtists(artistName) {
     fetch('http://localhost:3001/search/' + encodeURIComponent(artistName))
       .then(res => res.json())
       .then(
           (result) => {
               const artist = result.artist;
               const relatedArtists = result.related_artists;
-              this.updateGraph(this.state.graph, artist, relatedArtists);
+              this.addArtistToGraph(this.state.graph, artist);
+              this.addRelatedArtistsToGraph(this.state.graph, artist.id, relatedArtists);
+          },
+          (error) => {
+              console.log(error);
+          }
+      );
+  }
+
+  drawRelatedArtists(artistID) {
+    fetch('http://localhost:3001/related-artists/' + encodeURIComponent(artistID))
+      .then(res => res.json())
+      .then(
+          (result) => {
+              const relatedArtists = result.related_artists;
+              this.addRelatedArtistsToGraph(this.state.graph, artistID, relatedArtists);
           },
           (error) => {
               console.log(error);
@@ -120,7 +135,7 @@ class App extends React.Component {
     const artistImage = this.getArtistImageOrDefault(artist, null);
 
     const artistNode = {
-      id: artist.name,
+      id: artist.id,
       label: artist.name,
       title: artist.name,
       shape: "circularImage",
@@ -144,36 +159,13 @@ class App extends React.Component {
     return relatedArtistEdge;
   }
 
-  addRelatedArtistsToGraph(nodes, edges, artistNodeID, relatedArtists) {
-    if (relatedArtists == null) {
-      return;
-    }
-
-    for (let i = 0; i < relatedArtists.length; i++) {
-      const relatedArtist = relatedArtists[i];
-
-      const relatedArtistNode = this.getArtistNode(relatedArtist);
-      const relatedArtistEdge = this.getRelatedArtistEdge(artistNodeID, relatedArtist.name);
-
-      if (!this.state.drawnNodes.has(relatedArtist.name)) {
-        this.state.drawnNodes.add(relatedArtist.name);
-        nodes.push(relatedArtistNode);
-      }
-
-      if (!this.state.drawnEdges.has(relatedArtistEdge.id)) {
-        this.state.drawnEdges.add(relatedArtistEdge.id);
-        edges.push(relatedArtistEdge);
-      }
-    }
-  }
-
-  updateGraph(graph, artist, relatedArtists) {
+  addArtistToGraph(graph, artist) {
     if (artist == null) {
       return;
     }
 
     let nodes = graph.nodes.slice();
-    let edges = graph.edges.slice();
+    const edges = graph.edges;
 
     const artistNode = this.getArtistNode(artist);
 
@@ -182,7 +174,38 @@ class App extends React.Component {
       nodes.push(artistNode);
     }
 
-    this.addRelatedArtistsToGraph(nodes, edges, artistNode.id, relatedArtists);
+    this.setState({
+      graph: {
+        nodes: nodes,
+        edges: edges
+      }
+    });
+  }
+
+  addRelatedArtistsToGraph(graph, artistNodeID, relatedArtists) {
+    if (relatedArtists == null) {
+      return;
+    }
+
+    let nodes = graph.nodes.slice();
+    let edges = graph.edges.slice();
+
+    for (let i = 0; i < relatedArtists.length; i++) {
+      const relatedArtist = relatedArtists[i];
+
+      const relatedArtistNode = this.getArtistNode(relatedArtist);
+      const relatedArtistEdge = this.getRelatedArtistEdge(artistNodeID, relatedArtistNode.id);
+
+      if (!this.state.drawnNodes.has(relatedArtistNode.id)) {
+        this.state.drawnNodes.add(relatedArtistNode.id);
+        nodes.push(relatedArtistNode);
+      }
+
+      if (!this.state.drawnEdges.has(relatedArtistEdge.id)) {
+        this.state.drawnEdges.add(relatedArtistEdge.id);
+        edges.push(relatedArtistEdge);
+      }
+    }
 
     this.setState({
       graph: {
