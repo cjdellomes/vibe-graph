@@ -127,6 +127,20 @@ class App extends React.Component {
     return artistNode;
   }
 
+  getRelatedArtistEdge(artistNodeID, relatedArtistNodeID) {
+    if (artistNodeID == null || relatedArtistNodeID == null) {
+      return null;
+    }
+
+    const relatedArtistEdge = {
+      id: artistNodeID + ':' + relatedArtistNodeID,
+      from: artistNodeID,
+      to: relatedArtistNodeID
+    };
+
+    return relatedArtistEdge;
+  }
+
   updateGraph(graph, artist, relatedArtists) {
     if (artist === null || artist === undefined) {
       return;
@@ -152,11 +166,7 @@ class App extends React.Component {
   
         const relatedArtistNode = this.getArtistNode(relatedArtist);
   
-        const relatedArtistEdge = {
-          id: artist.name + ':' + relatedArtist.name,
-          from: artist.name,
-          to: relatedArtist.name
-        };
+        const relatedArtistEdge = this.getRelatedArtistEdge(artist.name, relatedArtist.name);
   
         if (!this.state.drawnNodes.has(relatedArtist.name)) {
           this.state.drawnNodes.add(relatedArtist.name);
