@@ -7,7 +7,7 @@ router.param('artistID', async function (req, res, next, artistID) {
     const token = await spotify.getToken();
     const relatedArtists = await spotify.getRelatedArtists(artistID, token);
 
-    if (relatedArtists === null || relatedArtists === undefined) {
+    if (relatedArtists == null) {
         req.relatedArtists = null;
         return next();
     }
@@ -17,7 +17,7 @@ router.param('artistID', async function (req, res, next, artistID) {
   });
   
   router.get('/:artistID', function (req, res, next) {
-    if (req.relatedArtists === undefined || req.relatedArtists === null) {
+    if (req.relatedArtists == null) {
       res.status(400);
       res.send('Invalid ID');
       return;

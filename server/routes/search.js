@@ -8,7 +8,7 @@ router.param('artist', async function (req, res, next, artistName) {
   const artist = await spotify.getFirstArtist(artistName, token);
   req.artist = artist;
 
-  if (artist === undefined || artist === null) {
+  if (artist == null) {
     req.relatedArtists = null;
     return next();
   }
@@ -21,7 +21,7 @@ router.param('artist', async function (req, res, next, artistName) {
 });
 
 router.get('/:artist', function (req, res, next) {
-  if (req.artist === undefined || req.artist === null) {
+  if (req.artist == null) {
     res.status(404);
     res.send('Not Found');
     return;

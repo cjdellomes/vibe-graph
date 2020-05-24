@@ -110,7 +110,7 @@ class App extends React.Component {
   }
 
   getArtistNode(artist) {
-    if (artist === null || artist === undefined) {
+    if (artist == null) {
       return null;
     }
 
@@ -142,7 +142,7 @@ class App extends React.Component {
   }
 
   updateGraph(graph, artist, relatedArtists) {
-    if (artist === null || artist === undefined) {
+    if (artist == null) {
       return;
     }
 
@@ -160,7 +160,7 @@ class App extends React.Component {
       this.state.loadedArtists.add(artistNode.id);
     }
 
-    if (relatedArtists !== undefined && relatedArtists !== null) {
+    if (relatedArtists != null) {
       for (let i = 0; i < relatedArtists.length; i++) {
         const relatedArtist = relatedArtists[i];
   
