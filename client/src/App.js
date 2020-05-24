@@ -178,10 +178,8 @@ class App extends React.Component {
   render() {
     return (
       <div className="container">
-        <div className="form-box">
-          <ArtistForm searchValue={this.state.searchValue} onArtistChange={this.handleArtistChange} onArtistSubmit={this.handleArtistSubmit} onGraphReset={this.handleGraphReset}/>
-        </div>
-        <div className="canvas-box">
+        <ArtistForm searchValue={this.state.searchValue} onArtistChange={this.handleArtistChange} onArtistSubmit={this.handleArtistSubmit} onGraphReset={this.handleGraphReset}/>
+        <div className="fullscreen">
           <Graph
             graph={this.state.graph}
             options={this.options}

@@ -1,4 +1,5 @@
 import React from 'react';
+import './ArtistForm.css';
 
 class ArtistForm extends React.Component {
     constructor(props) {
@@ -26,15 +27,13 @@ class ArtistForm extends React.Component {
 
     render() {
         return (
-            <div>
-                <form onSubmit={this.handleSubmit}>
-                    <label>
-                        <input type="text" value={this.props.searchValue} onChange={this.handleChange} placeholder="Artist Name" />
-                    </label>
-                    <input type="submit" onSubmit={this.handleSubmit} />
-                    <input type="reset" onClick={this.handleReset} />
-                </form>
-            </div>
+            <form id="form-box" className="transparent-blur" onSubmit={this.handleSubmit}>
+                <button type="button" onClick={this.handleReset}>Reset</button>
+                <button type="button" onClick={this.handleSubmit}>Search</button>
+                <div id="search-field">
+                    <input type="text" value={this.props.searchValue} onChange={this.handleChange} placeholder="Artist Name" />
+                </div>
+            </form>
         );
     }
 }
