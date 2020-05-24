@@ -85,6 +85,7 @@ class App extends React.Component {
     const artist = event.nodes[0];
     if (!this.state.loadedArtists.has(artist)) {
       this.drawRelatedArtists(artist);
+      this.state.loadedArtists.add(artist.name);
     }
   }
 
@@ -155,10 +156,6 @@ class App extends React.Component {
     if (!this.state.drawnNodes.has(artistNode.id)) {
       this.state.drawnNodes.add(artistNode.id);
       nodes.push(artistNode);
-    }
-
-    if (!this.state.loadedArtists.has(artistNode.id)) {
-      this.state.loadedArtists.add(artistNode.id);
     }
 
     if (relatedArtists != null) {
