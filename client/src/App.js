@@ -11,6 +11,7 @@ class App extends React.Component {
     this.handleGraphReset = this.handleGraphReset.bind(this);
     this.handleNodeClick = this.handleNodeClick.bind(this);
     this.getArtistNode = this.getArtistNode.bind(this);
+    this.getRelatedArtistEdge = this.getRelatedArtistEdge.bind(this);
     this.updateGraph = this.updateGraph.bind(this);
     this.drawRelatedArtists = this.drawRelatedArtists.bind(this);
 
