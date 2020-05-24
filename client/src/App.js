@@ -25,7 +25,7 @@ class App extends React.Component {
     };
 
     this.options = {
-      autoresize: true,
+      autoResize: true,
       layout: {
         hierarchical: false
       },
