@@ -10,6 +10,7 @@ class App extends React.Component {
     this.handleArtistSubmit = this.handleArtistSubmit.bind(this);
     this.handleGraphReset = this.handleGraphReset.bind(this);
     this.handleNodeClick = this.handleNodeClick.bind(this);
+    this.getArtistNode = this.getArtistNode.bind(this);
     this.updateGraph = this.updateGraph.bind(this);
     this.drawRelatedArtists = this.drawRelatedArtists.bind(this);
 
@@ -108,13 +109,10 @@ class App extends React.Component {
     return defaultVal;
   }
 
-  updateGraph(graph, artist, relatedArtists) {
+  getArtistNode(artist) {
     if (artist === null || artist === undefined) {
-      return;
+      return null;
     }
-
-    let nodes = graph.nodes.slice();
-    let edges = graph.edges.slice();
 
     const artistImage = this.getArtistImageOrDefault(artist, null);
 
@@ -125,6 +123,19 @@ class App extends React.Component {
       shape: "circularImage",
       image: artistImage
     };
+
+    return artistNode;
+  }
+
+  updateGraph(graph, artist, relatedArtists) {
+    if (artist === null || artist === undefined) {
+      return;
+    }
+
+    let nodes = graph.nodes.slice();
+    let edges = graph.edges.slice();
+
+    const artistNode = this.getArtistNode(artist);
 
     if (!this.state.drawnNodes.has(artistNode.id)) {
       this.state.drawnNodes.add(artistNode.id);
@@ -139,15 +150,7 @@ class App extends React.Component {
       for (let i = 0; i < relatedArtists.length; i++) {
         const relatedArtist = relatedArtists[i];
   
-        const relatedArtistImage = this.getArtistImageOrDefault(relatedArtist, null);
-  
-        const relatedArtistNode = {
-          id: relatedArtist.name,
-          label: relatedArtist.name,
-          title: relatedArtist.name,
-          shape: "circularImage",
-          image: relatedArtistImage,
-        };
+        const relatedArtistNode = this.getArtistNode(relatedArtist);
   
         const relatedArtistEdge = {
           id: artist.name + ':' + relatedArtist.name,
