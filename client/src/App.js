@@ -186,7 +186,6 @@ class App extends React.Component {
             graph={this.state.graph}
             options={this.options}
             events={this.events}
-            style={{width:"99%", height: "99%", border: "1px solid lightgray"}}
           />
         </div>
       </div>

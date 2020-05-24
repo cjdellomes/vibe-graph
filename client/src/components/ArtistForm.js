@@ -29,8 +29,7 @@ class ArtistForm extends React.Component {
             <div>
                 <form onSubmit={this.handleSubmit}>
                     <label>
-                        Artist:
-                        <input type="text" value={this.props.searchValue} onChange={this.handleChange} />
+                        <input type="text" value={this.props.searchValue} onChange={this.handleChange} placeholder="Artist Name" />
                     </label>
                     <input type="submit" onSubmit={this.handleSubmit} />
                     <input type="reset" onClick={this.handleReset} />
