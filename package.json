@@ -41,7 +41,7 @@
     "node": "12.16.3"
   },
   "scripts": {
-    "start": "cd server && npm start",
+    "start": "cd client && npm install && npm run build && cd ../server && npm install && npm start",
     "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm start\" "
   },
   "repository": {
