@@ -1,11 +1,19 @@
 const fetch = require('node-fetch');
 const env = process.env.NODE_ENV || 'development';
-const config = require('../config')[env];
 
 class SpotifyController {
     static getToken = function() {
-        const clientID = config.clientID;
-        const clientSecret = config.clientSecret;
+        let clientID;
+        let clientSecret;
+        if (env === 'development') {
+            const config = require('../config')[env];
+            clientID = config.clientID;
+            clientSecret = config.clientSecret;
+        } else {
+            clientID = process.env.CLIENT_ID;
+            clientSecret = process.env.CLIENT_SECRET;
+        }
+        
         const clientStr = clientID + ':' + clientSecret;
         return fetch(
             'https://accounts.spotify.com/api/token',
