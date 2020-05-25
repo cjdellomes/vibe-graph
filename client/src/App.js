@@ -91,7 +91,7 @@ class App extends React.Component {
   }
 
   drawArtistAndRelatedArtists(artistName) {
-    fetch('http://localhost:3001/search/' + encodeURIComponent(artistName))
+    fetch('/search/' + encodeURIComponent(artistName))
       .then(res => res.json())
       .then(
           (result) => {
@@ -107,7 +107,7 @@ class App extends React.Component {
   }
 
   drawRelatedArtists(artistID) {
-    fetch('http://localhost:3001/related-artists/' + encodeURIComponent(artistID))
+    fetch('/related-artists/' + encodeURIComponent(artistID))
       .then(res => res.json())
       .then(
           (result) => {

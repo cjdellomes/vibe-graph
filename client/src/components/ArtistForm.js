@@ -15,7 +15,6 @@ class ArtistForm extends React.Component {
     }
 
     handleSubmit(event) {
-        console.log('Artist submitted: ' + this.props.searchValue);
         this.props.onArtistSubmit(this.props.searchValue);
         event.preventDefault();
     }
