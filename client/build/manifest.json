@@ -1,11 +1,6 @@
 {
-<<<<<<< HEAD
   "short_name": "Vibe Graph",
   "name": "Vibe Graph",
-=======
-  "short_name": "React App",
-  "name": "Create React App Sample",
->>>>>>> 46c43df926eaf502d80158460930aee3a4dc65ea
   "icons": [
     {
       "src": "favicon.ico",
