@@ -12,15 +12,7 @@ const relatedArtistsRouter = require('./routes/relatedArtists');
 
 let app = express();
 
-if (process.env.NODE_ENV === 'production') {
-  app.use((req, res, next) => {
-    if (req.header('x-forwarded-proto') !== 'https') {
-      res.redirect(`https://${req.header('host')}${req.url}`);
-    } else {
-      next();
-    }
-  });
-}
+app.use(enforce.HTTPS({ trustProtoHeader: true }));
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -28,7 +20,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname + '/../client', 'build')));
 app.use(cors());
-app.use(enforce.HTTPS({ trustProtoHeader: true }));
 
 app.use('/', indexRouter);
 app.use('/search', searchRouter);
