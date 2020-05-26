@@ -18,6 +18,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname + '/../client', 'build')));
 app.use(cors());
+
+if(process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    console.log(req);
+    console.log(req.header('x-forwarded-proto'));
+    console.log(req.get('x-forwarded-proto'));
+    console.log(req.header('host'));
+    if (req.header('x-forwarded-proto') !== 'https')
+      res.redirect(`https://${req.header('host')}${req.url}`)
+    else
+      next()
+  })
+}
+
 app.use(enforce.HTTPS({ trustProtoHeader: true }))
 
 app.use('/', indexRouter);
