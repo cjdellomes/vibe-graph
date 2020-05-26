@@ -4,7 +4,6 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-const sslRedirect = require('heroku-ssl-redirect');
 
 const indexRouter = require('./routes/index');
 const searchRouter = require('./routes/search');
@@ -19,7 +18,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname + '/../client', 'build')));
 app.use(cors());
 
-app.use(sslRedirect());
+if(process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.header('x-forwarded-proto') !== 'https')
+      res.redirect(`https://${req.header('host')}${req.url}`)
+    else
+      next()
+  })
+}
 
 app.use('/', indexRouter);
 app.use('/search', searchRouter);
