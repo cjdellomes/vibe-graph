@@ -26,4 +26,4 @@ yarn-error.log*
 
 /client/react-readme.md
 config.js
-/client/build
+client/build
