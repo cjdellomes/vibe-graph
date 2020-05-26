@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
 
+
 const indexRouter = require('./routes/index');
 const searchRouter = require('./routes/search');
 const relatedArtistsRouter = require('./routes/relatedArtists');
@@ -17,6 +18,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname + '/../client', 'build')));
 app.use(cors());
+
+if (process.env.NODE_ENV === 'production') {
+  const sslRedirect = require('heroku-ssl-redirect');
+  app.use(sslRedirect());
+}
 
 app.use('/', indexRouter);
 app.use('/search', searchRouter);
