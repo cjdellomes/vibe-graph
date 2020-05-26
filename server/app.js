@@ -21,6 +21,8 @@ app.use(cors());
 app.use(enforce.HTTPS({ trustProtoHeader: true }))
 
 app.use((req, res, next) => {
+  console.log('jksdlghasdkghjkasghjasdg');
+  console.log(req.headers);
   if (req.header('x-forwarded-proto') !== 'https')
     res.redirect(`https://${req.header('host')}${req.url}`);
   else
