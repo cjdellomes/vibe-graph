@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 router.use((req, res, next) => {
+  console.log(req.headers);
   if (req.header('x-forwarded-proto') !== 'https')
     res.redirect(`https://${req.header('host')}${req.url}`);
   else
@@ -11,6 +12,7 @@ router.use((req, res, next) => {
 /* GET home page. */
 router.get('/', function(req, res, next) {
   console.log('test');
+  console.log(req.headers);
   res.sendFile(path.join(__dirname + '/../client', 'build', 'index.html'))
 });
 
