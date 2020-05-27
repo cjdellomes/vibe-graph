@@ -12,13 +12,21 @@ const relatedArtistsRouter = require('./routes/relatedArtists');
 
 let app = express();
 
-app.use(enforce.HTTPS({ trustProtoHeader: true }));
+if (process.env.NODE_ENV === 'production') {
+  app.use(enforce.HTTPS({ trustProtoHeader: true }));
+}
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname + '/../client', 'build')));
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname + '/../client', 'build')));
+} else {
+  app.use(express.static(path.join(__dirname, 'public')));
+}
+
 app.use(cors());
 
 app.use('/', indexRouter);
