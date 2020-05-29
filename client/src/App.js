@@ -134,7 +134,7 @@ class App extends React.Component {
       return null;
     }
 
-    const artistImage = this.getArtistImageOrDefault(artist, null);
+    const artistImage = this.getArtistImageOrDefault(artist, "");
 
     const artistNode = {
       id: artist.id,
@@ -208,11 +208,6 @@ class App extends React.Component {
         edges.push(relatedArtistEdge);
       }
     }
-
-    console.log({
-      nodes: nodes,
-      edges: edges
-    });
 
     this.setState({
       graph: {
