@@ -42,6 +42,7 @@
   },
   "scripts": {
     "start": "cd server && npm install && npm start",
+    "build": "cd client && npm install && npm run build",
     "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm start\" "
   },
   "repository": {
