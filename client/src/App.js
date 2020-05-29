@@ -10,6 +10,7 @@ class App extends React.Component {
     this.handleArtistSubmit = this.handleArtistSubmit.bind(this);
     this.handleGraphReset = this.handleGraphReset.bind(this);
     this.handleNodeClick = this.handleNodeClick.bind(this);
+    this.getArtistImageOrDefault = this.getArtistImageOrDefault.bind(this);
     this.getArtistNode = this.getArtistNode.bind(this);
     this.getRelatedArtistEdge = this.getRelatedArtistEdge.bind(this);
     this.addArtistToGraph = this.addArtistToGraph.bind(this);
@@ -207,6 +208,11 @@ class App extends React.Component {
         edges.push(relatedArtistEdge);
       }
     }
+
+    console.log({
+      nodes: nodes,
+      edges: edges
+    });
 
     this.setState({
       graph: {
