@@ -14,6 +14,7 @@ class App extends React.Component {
     this.getRelatedArtistEdge = this.getRelatedArtistEdge.bind(this);
     this.addArtistToGraph = this.addArtistToGraph.bind(this);
     this.addRelatedArtistsToGraph = this.addRelatedArtistsToGraph.bind(this);
+    this.drawArtistAndRelatedArtists = this.drawArtistAndRelatedArtists.bind(this);
     this.drawRelatedArtists = this.drawRelatedArtists.bind(this);
 
     this.state = {
