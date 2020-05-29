@@ -54,5 +54,14 @@
   "bugs": {
     "url": "https://github.com/cjdellomes/vibe-graph/issues"
   },
-  "homepage": "https://github.com/cjdellomes/vibe-graph#readme"
+  "homepage": "https://github.com/cjdellomes/vibe-graph#readme",
+  "keywords": [
+    "Spotify",
+    "vis",
+    "graph",
+    "network",
+    "visualization",
+    "React",
+    "Express"
+  ]
 }
