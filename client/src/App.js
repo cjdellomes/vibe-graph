@@ -230,14 +230,14 @@ class App extends React.Component {
     const { searchValue, graph } = this.state;
     return (
       // eslint-disable-next-line react/jsx-filename-extension
-      <div className='container'>
+      <div className="container">
         <ArtistForm
           searchValue={searchValue}
           onArtistChange={this.handleArtistChange}
           onArtistSubmit={this.handleArtistSubmit}
           onGraphReset={this.handleGraphReset}
         />
-        <div className='fullscreen'>
+        <div className="fullscreen">
           <Graph graph={graph} options={this.options} events={this.events} />
         </div>
       </div>

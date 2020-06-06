@@ -1,5 +1,6 @@
-import React from "react";
-import "./ArtistForm.css";
+import React from 'react';
+import './ArtistForm.css';
+import PropTypes from 'prop-types';
 
 class ArtistForm extends React.Component {
   constructor(props) {
@@ -11,21 +12,26 @@ class ArtistForm extends React.Component {
   }
 
   handleChange(event) {
-    this.props.onArtistChange(event.target.value);
+    const { onArtistChange } = this.props;
+    onArtistChange(event.target.value);
   }
 
   handleSubmit(event) {
-    this.props.onArtistSubmit(this.props.searchValue);
+    const { onArtistSubmit, searchValue } = this.props;
+    onArtistSubmit(searchValue);
     event.preventDefault();
   }
 
   handleReset(event) {
-    this.props.onGraphReset();
+    const { onGraphReset } = this.props;
+    onGraphReset();
     event.preventDefault();
   }
 
   render() {
+    const { searchValue } = this.props;
     return (
+      // eslint-disable-next-line react/jsx-filename-extension
       <form
         id="form-box"
         className="transparent-blur"
@@ -40,7 +46,7 @@ class ArtistForm extends React.Component {
         <div id="search-field">
           <input
             type="text"
-            value={this.props.searchValue}
+            value={searchValue}
             onChange={this.handleChange}
             placeholder="Artist Name"
           />
@@ -49,5 +55,19 @@ class ArtistForm extends React.Component {
     );
   }
 }
+
+ArtistForm.propTypes = {
+  searchValue: PropTypes.string,
+  onArtistChange: PropTypes.func,
+  onArtistSubmit: PropTypes.func,
+  onGraphReset: PropTypes.func,
+};
+
+ArtistForm.defaultProps = {
+  searchValue: '',
+  onArtistChange: () => {},
+  onArtistSubmit: () => {},
+  onGraphReset: () => {},
+};
 
 export default ArtistForm;
