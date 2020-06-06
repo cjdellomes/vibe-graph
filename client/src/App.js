@@ -1,3 +1,5 @@
+// eslint-disable-next-line no-redeclare
+/* global fetch:false */
 import React from 'react';
 import './App.css';
 import Graph from 'react-graph-vis';
@@ -10,9 +12,7 @@ class App extends React.Component {
     this.handleArtistSubmit = this.handleArtistSubmit.bind(this);
     this.handleGraphReset = this.handleGraphReset.bind(this);
     this.handleNodeClick = this.handleNodeClick.bind(this);
-    this.getArtistImageOrDefault = this.getArtistImageOrDefault.bind(this);
     this.getArtistNode = this.getArtistNode.bind(this);
-    this.getRelatedArtistEdge = this.getRelatedArtistEdge.bind(this);
     this.addArtistToGraph = this.addArtistToGraph.bind(this);
     this.addRelatedArtistsToGraph = this.addRelatedArtistsToGraph.bind(this);
     this.drawArtistSearchResults = this.drawArtistSearchResults.bind(this);
@@ -75,7 +75,7 @@ class App extends React.Component {
       return null;
     }
 
-    const artistImage = this.getArtistImageOrDefault(artist, '');
+    const artistImage = this.constructor.getArtistImageOrDefault(artist, '');
 
     const artistNode = {
       id: artist.id,
@@ -108,8 +108,7 @@ class App extends React.Component {
       .then(
         (result) => {
           const relatedArtists = result.related_artists;
-          const { graph } = this.state;
-          this.addRelatedArtistsToGraph(graph, artistID, relatedArtists);
+          this.addRelatedArtistsToGraph(artistID, relatedArtists);
         },
         (error) => {
           console.log(error);
@@ -124,9 +123,9 @@ class App extends React.Component {
         (result) => {
           const { artist } = result;
           const relatedArtists = result.related_artists;
-          const { graph } = this.state;
-          this.addArtistToGraph(graph, artist);
-          this.addRelatedArtistsToGraph(graph, artist.id, relatedArtists);
+
+          this.addArtistToGraph(artist);
+          this.addRelatedArtistsToGraph(artist.id, relatedArtists);
         },
         (error) => {
           console.log(error);
@@ -164,13 +163,14 @@ class App extends React.Component {
     this.setState({ searchValue });
   }
 
-  addArtistToGraph(graph, artist) {
+  addArtistToGraph(artist) {
     if (artist == null) {
       return;
     }
 
+    const { graph } = this.state;
     const nodes = graph.nodes.slice();
-    const { edges } = graph;
+    const edges = graph.edges.slice();
 
     const artistNode = this.getArtistNode(artist);
 
@@ -188,11 +188,12 @@ class App extends React.Component {
     });
   }
 
-  addRelatedArtistsToGraph(graph, artistNodeID, relatedArtists) {
+  addRelatedArtistsToGraph(artistNodeID, relatedArtists) {
     if (relatedArtists == null) {
       return;
     }
 
+    const { graph } = this.state;
     const nodes = graph.nodes.slice();
     const edges = graph.edges.slice();
 
@@ -200,18 +201,16 @@ class App extends React.Component {
       const relatedArtist = relatedArtists[i];
 
       const relatedArtistNode = this.getArtistNode(relatedArtist);
-      const relatedArtistEdge = this.getRelatedArtistEdge(
+      const relatedArtistEdge = this.constructor.getRelatedArtistEdge(
         artistNodeID,
         relatedArtistNode.id,
       );
 
-      const { drawnNodes } = this.state;
+      const { drawnNodes, drawnEdges } = this.state;
       if (!drawnNodes.has(relatedArtistNode.id)) {
         drawnNodes.add(relatedArtistNode.id);
         nodes.push(relatedArtistNode);
       }
-
-      const { drawnEdges } = this.state;
       if (!drawnEdges.has(relatedArtistEdge.id)) {
         drawnEdges.add(relatedArtistEdge.id);
         edges.push(relatedArtistEdge);
