@@ -1,7 +1,7 @@
-import React from 'react';
-import './App.css';
-import ArtistForm from './components/ArtistForm';
-import Graph from 'react-graph-vis';
+import React from "react";
+import "./App.css";
+import ArtistForm from "./components/ArtistForm";
+import Graph from "react-graph-vis";
 
 class App extends React.Component {
   constructor(props) {
@@ -15,14 +15,14 @@ class App extends React.Component {
     this.getRelatedArtistEdge = this.getRelatedArtistEdge.bind(this);
     this.addArtistToGraph = this.addArtistToGraph.bind(this);
     this.addRelatedArtistsToGraph = this.addRelatedArtistsToGraph.bind(this);
-    this.drawArtistAndRelatedArtists = this.drawArtistAndRelatedArtists.bind(this);
+    this.drawArtistSearchResults = this.drawArtistSearchResults.bind(this);
     this.drawRelatedArtists = this.drawRelatedArtists.bind(this);
 
     this.state = {
-      searchValue: '',
+      searchValue: "",
       graph: {
         nodes: [],
-        edges: []
+        edges: [],
       },
       drawnNodes: new Set(),
       drawnEdges: new Set(),
@@ -32,51 +32,51 @@ class App extends React.Component {
     this.options = {
       autoResize: true,
       layout: {
-        hierarchical: false
+        hierarchical: false,
       },
       edges: {
         width: 0.15,
         color: { inherit: "from" },
         smooth: {
-          type: "continuous"
-        }
+          type: "continuous",
+        },
       },
       physics: {
         enabled: true,
         repulsion: {
-            centralGravity: 0.0,
-            springLength: 50,
-            springConstant: 0.01,
-            nodeDistance: 200,
-            damping: 0.09
+          centralGravity: 0.0,
+          springLength: 50,
+          springConstant: 0.01,
+          nodeDistance: 200,
+          damping: 0.09,
         },
-        solver: 'repulsion'
+        solver: "repulsion",
       },
       interaction: {
         hover: true,
         tooltipDelay: 200,
-      }
+      },
     };
 
     this.events = {
-      selectNode: this.handleNodeClick
+      selectNode: this.handleNodeClick,
     };
   }
 
   handleArtistChange(searchValue) {
-    this.setState({searchValue});
+    this.setState({ searchValue });
   }
 
   handleArtistSubmit(searchValue) {
-    this.drawArtistAndRelatedArtists(searchValue);
+    this.drawArtistSearchResults(searchValue);
   }
 
   handleGraphReset() {
     this.setState({
-      searchValue: '',
+      searchValue: "",
       graph: {
         nodes: [],
-        edges: []
+        edges: [],
       },
       drawnNodes: new Set(),
       drawnEdges: new Set(),
@@ -92,33 +92,41 @@ class App extends React.Component {
     }
   }
 
-  drawArtistAndRelatedArtists(artistName) {
-    fetch('/search/' + encodeURIComponent(artistName))
-      .then(res => res.json())
+  drawArtistSearchResults(artistName) {
+    fetch("/search/" + encodeURIComponent(artistName))
+      .then((res) => res.json())
       .then(
-          (result) => {
-              const artist = result.artist;
-              const relatedArtists = result.related_artists;
-              this.addArtistToGraph(this.state.graph, artist);
-              this.addRelatedArtistsToGraph(this.state.graph, artist.id, relatedArtists);
-          },
-          (error) => {
-              console.log(error);
-          }
+        (result) => {
+          const artist = result.artist;
+          const relatedArtists = result.related_artists;
+          this.addArtistToGraph(this.state.graph, artist);
+          this.addRelatedArtistsToGraph(
+            this.state.graph,
+            artist.id,
+            relatedArtists
+          );
+        },
+        (error) => {
+          console.log(error);
+        }
       );
   }
 
   drawRelatedArtists(artistID) {
-    fetch('/related-artists/' + encodeURIComponent(artistID))
-      .then(res => res.json())
+    fetch("/related-artists/" + encodeURIComponent(artistID))
+      .then((res) => res.json())
       .then(
-          (result) => {
-              const relatedArtists = result.related_artists;
-              this.addRelatedArtistsToGraph(this.state.graph, artistID, relatedArtists);
-          },
-          (error) => {
-              console.log(error);
-          }
+        (result) => {
+          const relatedArtists = result.related_artists;
+          this.addRelatedArtistsToGraph(
+            this.state.graph,
+            artistID,
+            relatedArtists
+          );
+        },
+        (error) => {
+          console.log(error);
+        }
       );
   }
 
@@ -141,7 +149,7 @@ class App extends React.Component {
       label: artist.name,
       title: artist.name,
       shape: "circularImage",
-      image: artistImage
+      image: artistImage,
     };
 
     return artistNode;
@@ -153,9 +161,9 @@ class App extends React.Component {
     }
 
     const relatedArtistEdge = {
-      id: artistNodeID + ':' + relatedArtistNodeID,
+      id: artistNodeID + ":" + relatedArtistNodeID,
       from: artistNodeID,
-      to: relatedArtistNodeID
+      to: relatedArtistNodeID,
     };
 
     return relatedArtistEdge;
@@ -179,8 +187,8 @@ class App extends React.Component {
     this.setState({
       graph: {
         nodes: nodes,
-        edges: edges
-      }
+        edges: edges,
+      },
     });
   }
 
@@ -196,7 +204,10 @@ class App extends React.Component {
       const relatedArtist = relatedArtists[i];
 
       const relatedArtistNode = this.getArtistNode(relatedArtist);
-      const relatedArtistEdge = this.getRelatedArtistEdge(artistNodeID, relatedArtistNode.id);
+      const relatedArtistEdge = this.getRelatedArtistEdge(
+        artistNodeID,
+        relatedArtistNode.id
+      );
 
       if (!this.state.drawnNodes.has(relatedArtistNode.id)) {
         this.state.drawnNodes.add(relatedArtistNode.id);
@@ -212,15 +223,20 @@ class App extends React.Component {
     this.setState({
       graph: {
         nodes: nodes,
-        edges: edges
-      }
+        edges: edges,
+      },
     });
   }
 
   render() {
     return (
       <div className="container">
-        <ArtistForm searchValue={this.state.searchValue} onArtistChange={this.handleArtistChange} onArtistSubmit={this.handleArtistSubmit} onGraphReset={this.handleGraphReset}/>
+        <ArtistForm
+          searchValue={this.state.searchValue}
+          onArtistChange={this.handleArtistChange}
+          onArtistSubmit={this.handleArtistSubmit}
+          onGraphReset={this.handleGraphReset}
+        />
         <div className="fullscreen">
           <Graph
             graph={this.state.graph}
