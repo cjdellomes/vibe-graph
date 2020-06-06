@@ -1,7 +1,7 @@
-import React from "react";
-import "./App.css";
-import ArtistForm from "./components/ArtistForm";
-import Graph from "react-graph-vis";
+import React from 'react';
+import './App.css';
+import Graph from 'react-graph-vis';
+import ArtistForm from './components/ArtistForm';
 
 class App extends React.Component {
   constructor(props) {
@@ -19,7 +19,7 @@ class App extends React.Component {
     this.drawRelatedArtists = this.drawRelatedArtists.bind(this);
 
     this.state = {
-      searchValue: "",
+      searchValue: '',
       graph: {
         nodes: [],
         edges: [],
@@ -36,9 +36,9 @@ class App extends React.Component {
       },
       edges: {
         width: 0.15,
-        color: { inherit: "from" },
+        color: { inherit: 'from' },
         smooth: {
-          type: "continuous",
+          type: 'continuous',
         },
       },
       physics: {
@@ -50,7 +50,7 @@ class App extends React.Component {
           nodeDistance: 200,
           damping: 0.09,
         },
-        solver: "repulsion",
+        solver: 'repulsion',
       },
       interaction: {
         hover: true,
@@ -63,74 +63,7 @@ class App extends React.Component {
     };
   }
 
-  handleArtistChange(searchValue) {
-    this.setState({ searchValue });
-  }
-
-  handleArtistSubmit(searchValue) {
-    this.drawArtistSearchResults(searchValue);
-  }
-
-  handleGraphReset() {
-    this.setState({
-      searchValue: "",
-      graph: {
-        nodes: [],
-        edges: [],
-      },
-      drawnNodes: new Set(),
-      drawnEdges: new Set(),
-      loadedArtists: new Set(),
-    });
-  }
-
-  handleNodeClick(event) {
-    const artistNodeID = event.nodes[0];
-    if (!this.state.loadedArtists.has(artistNodeID)) {
-      this.drawRelatedArtists(artistNodeID);
-      this.state.loadedArtists.add(artistNodeID);
-    }
-  }
-
-  drawArtistSearchResults(artistName) {
-    fetch("/search/" + encodeURIComponent(artistName))
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          const artist = result.artist;
-          const relatedArtists = result.related_artists;
-          this.addArtistToGraph(this.state.graph, artist);
-          this.addRelatedArtistsToGraph(
-            this.state.graph,
-            artist.id,
-            relatedArtists
-          );
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-  }
-
-  drawRelatedArtists(artistID) {
-    fetch("/related-artists/" + encodeURIComponent(artistID))
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          const relatedArtists = result.related_artists;
-          this.addRelatedArtistsToGraph(
-            this.state.graph,
-            artistID,
-            relatedArtists
-          );
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-  }
-
-  getArtistImageOrDefault(artist, defaultVal) {
+  static getArtistImageOrDefault(artist, defaultVal) {
     if (artist.images.length > 0) {
       return artist.images[artist.images.length - 1].url;
     }
@@ -142,26 +75,26 @@ class App extends React.Component {
       return null;
     }
 
-    const artistImage = this.getArtistImageOrDefault(artist, "");
+    const artistImage = this.getArtistImageOrDefault(artist, '');
 
     const artistNode = {
       id: artist.id,
       label: artist.name,
       title: artist.name,
-      shape: "circularImage",
+      shape: 'circularImage',
       image: artistImage,
     };
 
     return artistNode;
   }
 
-  getRelatedArtistEdge(artistNodeID, relatedArtistNodeID) {
+  static getRelatedArtistEdge(artistNodeID, relatedArtistNodeID) {
     if (artistNodeID == null || relatedArtistNodeID == null) {
       return null;
     }
 
     const relatedArtistEdge = {
-      id: artistNodeID + ":" + relatedArtistNodeID,
+      id: `${artistNodeID}:${relatedArtistNodeID}`,
       from: artistNodeID,
       to: relatedArtistNodeID,
     };
@@ -169,25 +102,88 @@ class App extends React.Component {
     return relatedArtistEdge;
   }
 
+  drawRelatedArtists(artistID) {
+    fetch(`/related-artists/${encodeURIComponent(artistID)}`)
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          const relatedArtists = result.related_artists;
+          const { graph } = this.state;
+          this.addRelatedArtistsToGraph(graph, artistID, relatedArtists);
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
+  }
+
+  drawArtistSearchResults(artistName) {
+    fetch(`/search/${encodeURIComponent(artistName)}`)
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          const { artist } = result;
+          const relatedArtists = result.related_artists;
+          const { graph } = this.state;
+          this.addArtistToGraph(graph, artist);
+          this.addRelatedArtistsToGraph(graph, artist.id, relatedArtists);
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
+  }
+
+  handleNodeClick(event) {
+    const artistNodeID = event.nodes[0];
+    const { loadedArtists } = this.state;
+    if (!loadedArtists.has(artistNodeID)) {
+      this.drawRelatedArtists(artistNodeID);
+      loadedArtists.add(artistNodeID);
+    }
+  }
+
+  handleGraphReset() {
+    this.setState({
+      searchValue: '',
+      graph: {
+        nodes: [],
+        edges: [],
+      },
+      drawnNodes: new Set(),
+      drawnEdges: new Set(),
+      loadedArtists: new Set(),
+    });
+  }
+
+  handleArtistSubmit(searchValue) {
+    this.drawArtistSearchResults(searchValue);
+  }
+
+  handleArtistChange(searchValue) {
+    this.setState({ searchValue });
+  }
+
   addArtistToGraph(graph, artist) {
     if (artist == null) {
       return;
     }
 
-    let nodes = graph.nodes.slice();
-    const edges = graph.edges;
+    const nodes = graph.nodes.slice();
+    const { edges } = graph;
 
     const artistNode = this.getArtistNode(artist);
 
-    if (!this.state.drawnNodes.has(artistNode.id)) {
-      this.state.drawnNodes.add(artistNode.id);
+    const { drawnNodes } = this.state;
+    if (!drawnNodes.has(artistNode.id)) {
+      drawnNodes.add(artistNode.id);
       nodes.push(artistNode);
     }
 
     this.setState({
       graph: {
-        nodes: nodes,
-        edges: edges,
+        nodes,
+        edges,
       },
     });
   }
@@ -197,52 +193,52 @@ class App extends React.Component {
       return;
     }
 
-    let nodes = graph.nodes.slice();
-    let edges = graph.edges.slice();
+    const nodes = graph.nodes.slice();
+    const edges = graph.edges.slice();
 
-    for (let i = 0; i < relatedArtists.length; i++) {
+    for (let i = 0; i < relatedArtists.length; i += 1) {
       const relatedArtist = relatedArtists[i];
 
       const relatedArtistNode = this.getArtistNode(relatedArtist);
       const relatedArtistEdge = this.getRelatedArtistEdge(
         artistNodeID,
-        relatedArtistNode.id
+        relatedArtistNode.id,
       );
 
-      if (!this.state.drawnNodes.has(relatedArtistNode.id)) {
-        this.state.drawnNodes.add(relatedArtistNode.id);
+      const { drawnNodes } = this.state;
+      if (!drawnNodes.has(relatedArtistNode.id)) {
+        drawnNodes.add(relatedArtistNode.id);
         nodes.push(relatedArtistNode);
       }
 
-      if (!this.state.drawnEdges.has(relatedArtistEdge.id)) {
-        this.state.drawnEdges.add(relatedArtistEdge.id);
+      const { drawnEdges } = this.state;
+      if (!drawnEdges.has(relatedArtistEdge.id)) {
+        drawnEdges.add(relatedArtistEdge.id);
         edges.push(relatedArtistEdge);
       }
     }
 
     this.setState({
       graph: {
-        nodes: nodes,
-        edges: edges,
+        nodes,
+        edges,
       },
     });
   }
 
   render() {
+    const { searchValue, graph } = this.state;
     return (
-      <div className="container">
+      // eslint-disable-next-line react/jsx-filename-extension
+      <div className='container'>
         <ArtistForm
-          searchValue={this.state.searchValue}
+          searchValue={searchValue}
           onArtistChange={this.handleArtistChange}
           onArtistSubmit={this.handleArtistSubmit}
           onGraphReset={this.handleGraphReset}
         />
-        <div className="fullscreen">
-          <Graph
-            graph={this.state.graph}
-            options={this.options}
-            events={this.events}
-          />
+        <div className='fullscreen'>
+          <Graph graph={graph} options={this.options} events={this.events} />
         </div>
       </div>
     );
