@@ -1,9 +1,9 @@
 const express = require('express');
 const spotify = require('../spotifyController');
 
-let router = express.Router();
+const router = express.Router();
 
-router.param('artist', async function (req, res, next, artistName) {
+router.param('artist', async (req, res, next, artistName) => {
   const token = await spotify.getToken();
   const artist = await spotify.getFirstArtist(artistName, token);
   req.artist = artist;
@@ -20,16 +20,16 @@ router.param('artist', async function (req, res, next, artistName) {
   return next();
 });
 
-router.get('/:artist', function (req, res, next) {
+router.get('/:artist', (req, res) => {
   if (req.artist == null) {
     res.status(404);
     res.send('Not Found');
     return;
   }
-  
+
   res.send({
-    'artist' : req.artist,
-    'related_artists': req.relatedArtists
+    artist: req.artist,
+    related_artists: req.relatedArtists,
   });
 });
 
