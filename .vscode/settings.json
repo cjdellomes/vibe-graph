@@ -1,0 +1,7 @@
+{
+    "files.eol": "\n",
+    "eslint.alwaysShowStatus": true,
+    "eslint.format.enable": true,
+    "prettier.trailingComma": "all",
+    "prettier.singleQuote": true
+}
