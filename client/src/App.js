@@ -8,6 +8,7 @@ import ArtistForm from './components/ArtistForm';
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.getArtistNode = this.getArtistNode.bind(this);
     this.handleArtistChange = this.handleArtistChange.bind(this);
     this.handleArtistSubmit = this.handleArtistSubmit.bind(this);
     this.handleGraphReset = this.handleGraphReset.bind(this);
@@ -69,7 +70,7 @@ class App extends React.Component {
     return defaultVal;
   }
 
-  static getArtistNode(artist) {
+  getArtistNode(artist) {
     if (artist == null) {
       return null;
     }
@@ -171,7 +172,7 @@ class App extends React.Component {
     const nodes = graph.nodes.slice();
     const edges = graph.edges.slice();
 
-    const artistNode = this.constructor.getArtistNode(artist);
+    const artistNode = this.getArtistNode(artist);
 
     const { drawnNodes } = this.state;
     if (!drawnNodes.has(artistNode.id)) {
@@ -199,7 +200,7 @@ class App extends React.Component {
     for (let i = 0; i < relatedArtists.length; i += 1) {
       const relatedArtist = relatedArtists[i];
 
-      const relatedArtistNode = this.constructor.getArtistNode(relatedArtist);
+      const relatedArtistNode = this.getArtistNode(relatedArtist);
       const relatedArtistEdge = this.constructor.getRelatedArtistEdge(
         artistNodeID,
         relatedArtistNode.id,
