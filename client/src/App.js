@@ -1,5 +1,3 @@
-// eslint-disable-next-line no-redeclare
-/* global fetch:false */
 import React from 'react';
 import './App.css';
 import Graph from 'react-graph-vis';
