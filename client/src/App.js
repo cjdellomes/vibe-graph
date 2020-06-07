@@ -5,10 +5,48 @@ import './App.css';
 import Graph from 'react-graph-vis';
 import ArtistForm from './components/ArtistForm';
 
+const getArtistImageOrDefault = (artist, defaultVal) => {
+  if (artist.images.length > 0) {
+    return artist.images[artist.images.length - 1].url;
+  }
+  return defaultVal;
+};
+
+const getRelatedArtistEdge = (artistNodeID, relatedArtistNodeID) => {
+  if (artistNodeID == null || relatedArtistNodeID == null) {
+    return null;
+  }
+
+  const relatedArtistEdge = {
+    id: `${artistNodeID}:${relatedArtistNodeID}`,
+    from: artistNodeID,
+    to: relatedArtistNodeID,
+  };
+
+  return relatedArtistEdge;
+};
+
+const getArtistNode = (artist) => {
+  if (artist == null) {
+    return null;
+  }
+
+  const artistImage = getArtistImageOrDefault(artist, '');
+
+  const artistNode = {
+    id: artist.id,
+    label: artist.name,
+    title: artist.name,
+    shape: 'circularImage',
+    image: artistImage,
+  };
+
+  return artistNode;
+};
+
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.getArtistNode = this.getArtistNode.bind(this);
     this.handleArtistChange = this.handleArtistChange.bind(this);
     this.handleArtistSubmit = this.handleArtistSubmit.bind(this);
     this.handleGraphReset = this.handleGraphReset.bind(this);
@@ -61,45 +99,6 @@ class App extends React.Component {
     this.events = {
       selectNode: this.handleNodeClick,
     };
-  }
-
-  static getArtistImageOrDefault(artist, defaultVal) {
-    if (artist.images.length > 0) {
-      return artist.images[artist.images.length - 1].url;
-    }
-    return defaultVal;
-  }
-
-  getArtistNode(artist) {
-    if (artist == null) {
-      return null;
-    }
-
-    const artistImage = this.constructor.getArtistImageOrDefault(artist, '');
-
-    const artistNode = {
-      id: artist.id,
-      label: artist.name,
-      title: artist.name,
-      shape: 'circularImage',
-      image: artistImage,
-    };
-
-    return artistNode;
-  }
-
-  static getRelatedArtistEdge(artistNodeID, relatedArtistNodeID) {
-    if (artistNodeID == null || relatedArtistNodeID == null) {
-      return null;
-    }
-
-    const relatedArtistEdge = {
-      id: `${artistNodeID}:${relatedArtistNodeID}`,
-      from: artistNodeID,
-      to: relatedArtistNodeID,
-    };
-
-    return relatedArtistEdge;
   }
 
   drawRelatedArtists(artistID) {
@@ -172,7 +171,7 @@ class App extends React.Component {
     const nodes = graph.nodes.slice();
     const edges = graph.edges.slice();
 
-    const artistNode = this.getArtistNode(artist);
+    const artistNode = getArtistNode(artist);
 
     const { drawnNodes } = this.state;
     if (!drawnNodes.has(artistNode.id)) {
@@ -200,8 +199,8 @@ class App extends React.Component {
     for (let i = 0; i < relatedArtists.length; i += 1) {
       const relatedArtist = relatedArtists[i];
 
-      const relatedArtistNode = this.getArtistNode(relatedArtist);
-      const relatedArtistEdge = this.constructor.getRelatedArtistEdge(
+      const relatedArtistNode = getArtistNode(relatedArtist);
+      const relatedArtistEdge = getRelatedArtistEdge(
         artistNodeID,
         relatedArtistNode.id,
       );
