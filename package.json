@@ -53,7 +53,7 @@
     "start": "cd server && npm start",
     "build": "npm run build-client && npm run build-server",
     "dev": "concurrently \"cd server && npm dev\" \"cd client && npm start\" ",
-    "test": "cd server && npm test",
+    "test": "cd server && npm install && npm test",
     "build-client": "cd client && npm install && npm build",
     "build-server": "cd server && npm install"
   },
