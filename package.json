@@ -50,8 +50,8 @@
     "node": "12.16.3"
   },
   "scripts": {
-    "start": "cd server && npm install && npm start",
-    "build": "cd client && npm install && npm build",
+    "start": "cd server && npm start",
+    "build": "cd client && npm install && npm build && cd ../server && npm install",
     "dev": "concurrently \"cd server && npm dev\" \"cd client && npm start\" ",
     "test": "cd server && npm test"
   },
