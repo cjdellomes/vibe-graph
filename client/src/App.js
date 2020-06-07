@@ -12,7 +12,6 @@ class App extends React.Component {
     this.handleArtistSubmit = this.handleArtistSubmit.bind(this);
     this.handleGraphReset = this.handleGraphReset.bind(this);
     this.handleNodeClick = this.handleNodeClick.bind(this);
-    this.getArtistNode = this.getArtistNode.bind(this);
     this.addArtistToGraph = this.addArtistToGraph.bind(this);
     this.addRelatedArtistsToGraph = this.addRelatedArtistsToGraph.bind(this);
     this.drawArtistSearchResults = this.drawArtistSearchResults.bind(this);
@@ -70,7 +69,7 @@ class App extends React.Component {
     return defaultVal;
   }
 
-  getArtistNode(artist) {
+  static getArtistNode(artist) {
     if (artist == null) {
       return null;
     }
@@ -172,7 +171,7 @@ class App extends React.Component {
     const nodes = graph.nodes.slice();
     const edges = graph.edges.slice();
 
-    const artistNode = this.getArtistNode(artist);
+    const artistNode = this.constructor.getArtistNode(artist);
 
     const { drawnNodes } = this.state;
     if (!drawnNodes.has(artistNode.id)) {
@@ -200,7 +199,7 @@ class App extends React.Component {
     for (let i = 0; i < relatedArtists.length; i += 1) {
       const relatedArtist = relatedArtists[i];
 
-      const relatedArtistNode = this.getArtistNode(relatedArtist);
+      const relatedArtistNode = this.constructor.getArtistNode(relatedArtist);
       const relatedArtistEdge = this.constructor.getRelatedArtistEdge(
         artistNodeID,
         relatedArtistNode.id,
