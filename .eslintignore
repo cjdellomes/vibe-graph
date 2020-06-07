@@ -1,2 +1,5 @@
+node_modules
 client/config
 client/scripts
+client/node_modules
+server/node_modules
