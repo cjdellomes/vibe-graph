@@ -51,8 +51,9 @@
   },
   "scripts": {
     "start": "cd server && npm install && npm start",
-    "build": "cd client && npm install && npm run build",
-    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm start\" "
+    "build": "cd client && npm install && npm build",
+    "dev": "concurrently \"cd server && npm dev\" \"cd client && npm start\" ",
+    "test": "cd server && npm test"
   },
   "repository": {
     "type": "git",
