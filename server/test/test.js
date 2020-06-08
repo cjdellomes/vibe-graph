@@ -12,6 +12,8 @@ describe('App', () => {
         .request(app)
         .get(`/search/${artist}`)
         .end((err, res) => {
+          console.log(err);
+          console.log(res);
           chai.assert.equal(res.status, 200);
           chai.assert.typeOf(res.body, 'object');
           chai.assert.equal(res.body.artist.id, '3l0CmX0FuQjFxr8SK7Vqag');
