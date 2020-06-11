@@ -102,7 +102,12 @@ class SpotifyController {
       },
     })
       .then((res) => res.json())
-      .then((json) => json)
+      .then((json) => {
+        if (json.error != null) {
+          return null;
+        }
+        return json;
+      })
       .catch((error) => {
         console.error(
           'There was an error in the artist fetch operation: ',

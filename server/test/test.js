@@ -47,6 +47,23 @@ describe('SpotifyController', () => {
       chai.assert.equal(artist, null);
     });
   });
+  describe('getArtist', () => {
+    it('should get an artist given an artist ID', async () => {
+      const artistID = '3fMbdgg4jU18AjLCKBhRSm';
+      const token = await spotify.getToken();
+      const artist = await spotify.getArtist(artistID, token);
+      chai.assert.notEqual(artist, null);
+      chai.assert.typeOf(artist, 'object');
+      chai.assert.equal(artist.id, '3fMbdgg4jU18AjLCKBhRSm');
+      chai.assert.equal(artist.name, 'Michael Jackson');
+    });
+    it('should get a null object given a nonexisting artist ID', async () => {
+      const artistID = 'abc';
+      const token = await spotify.getToken();
+      const artist = await spotify.getArtist(artistID, token);
+      chai.assert.equal(artist, null);
+    });
+  });
 });
 
 describe('App', () => {
