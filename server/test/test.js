@@ -19,7 +19,7 @@ describe('SpotifyController', () => {
       const artists = await spotify.searchArtist(artistName, token);
       chai.assert.notEqual(artists, null);
       chai.assert.isArray(artists);
-      chai.assert.equal(artists.length, 20);
+      chai.assert.lengthOf(artists, 20);
       chai.assert.equal(artists[0].id, '3WrFJ7ztbogyGnTHbHJFl2');
     });
     it('should get an empty list of artists given a nonexisting artist name', async () => {
@@ -28,7 +28,7 @@ describe('SpotifyController', () => {
       const artists = await spotify.searchArtist(artistName, token);
       chai.assert.notEqual(artists, null);
       chai.assert.isArray(artists);
-      chai.assert.equal(artists.length, 0);
+      chai.assert.lengthOf(artists, 0);
     });
   });
   describe('getFirstArtist', () => {
@@ -62,6 +62,22 @@ describe('SpotifyController', () => {
       const token = await spotify.getToken();
       const artist = await spotify.getArtist(artistID, token);
       chai.assert.equal(artist, null);
+    });
+  });
+  describe('getRelatedArtists', () => {
+    it('should get a list of artists given an artist ID', async () => {
+      const artistID = '3dz0NnIZhtKKeXZxLOxCam';
+      const token = await spotify.getToken();
+      const artists = await spotify.getRelatedArtists(artistID, token);
+      chai.assert.notEqual(artists, null);
+      chai.assert.isArray(artists);
+      chai.assert.lengthOf(artists, 20);
+    });
+    it('should get a null object given a nonexisting artist ID', async () => {
+      const artistID = 'abc';
+      const token = await spotify.getToken();
+      const artists = await spotify.getRelatedArtists(artistID, token);
+      chai.assert.equal(artists, null);
     });
   });
 });
