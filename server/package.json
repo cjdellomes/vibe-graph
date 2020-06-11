@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
-    "test": "mocha --exit"
+    "test": "mocha --exit",
+    "coverage": "nyc npm run test"
   },
   "dependencies": {
     "chai": "^4.2.0",
@@ -21,7 +22,8 @@
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "nyc": "^15.1.0"
   },
   "engines": {
     "node": "12.16.3"

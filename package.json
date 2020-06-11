@@ -55,7 +55,8 @@
     "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run start\" ",
     "test": "cd server && npm install && npm run test",
     "build-client": "cd client && npm install && npm run build",
-    "build-server": "cd server && npm install"
+    "build-server": "cd server && npm install",
+    "coverage": "cd server && npm run coverage"
   },
   "repository": {
     "type": "git",
