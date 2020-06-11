@@ -9,6 +9,7 @@
 
 # testing
 /coverage
+/server/.nyc_output
 
 # production
 /build
