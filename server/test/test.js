@@ -1,8 +1,33 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const app = require('../app');
+const spotify = require('../spotifyController');
 
 chai.use(chaiHttp);
+
+describe('SpotifyController', () => {
+  it('should get a token', async () => {
+    const token = await spotify.getToken();
+    chai.assert.typeOf(token, 'string');
+  });
+  it('should get a list of artists matching the given artist name', async () => {
+    const artistName = 'the beatles';
+    const token = await spotify.getToken();
+    const artists = await spotify.searchArtist(artistName, token);
+    chai.assert.notEqual(artists, null);
+    chai.assert.isArray(artists);
+    chai.assert.equal(artists.length, 20);
+    chai.assert.equal(artists[0].id, '3WrFJ7ztbogyGnTHbHJFl2');
+  });
+  it('should get an empty list of artists given a nonexisting artist name', async () => {
+    const artistName = 'hgjaghjkadghjkaghjkghaghdghjkaghjkaglg';
+    const token = await spotify.getToken();
+    const artists = await spotify.searchArtist(artistName, token);
+    chai.assert.notEqual(artists, null);
+    chai.assert.isArray(artists);
+    chai.assert.equal(artists.length, 0);
+  });
+});
 
 describe('App', () => {
   describe('GET /', () => {

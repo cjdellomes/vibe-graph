@@ -52,11 +52,12 @@ class SpotifyController {
         },
       },
     )
-      .then((res) => res.json)
+      .then((res) => res.json())
       .then((json) => {
-        const artists = json.artists.items;
+        const { artists } = json;
+        const { items } = artists;
 
-        return artists;
+        return items;
       })
       .catch((error) => {
         console.error(
