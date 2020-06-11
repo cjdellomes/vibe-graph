@@ -6,31 +6,35 @@ const spotify = require('../spotifyController');
 chai.use(chaiHttp);
 
 describe('SpotifyController', () => {
-  it('should get a token', async () => {
-    const token = await spotify.getToken();
-    chai.assert.typeOf(token, 'string');
+  describe('getToken', () => {
+    it('should get a token', async () => {
+      const token = await spotify.getToken();
+      chai.assert.typeOf(token, 'string');
+    });
   });
-  it('should get a list of artists matching the given artist name', async () => {
-    const artistName = 'the beatles';
-    const token = await spotify.getToken();
-    const artists = await spotify.searchArtist(artistName, token);
-    chai.assert.notEqual(artists, null);
-    chai.assert.isArray(artists);
-    chai.assert.equal(artists.length, 20);
-    chai.assert.equal(artists[0].id, '3WrFJ7ztbogyGnTHbHJFl2');
-  });
-  it('should get an empty list of artists given a nonexisting artist name', async () => {
-    const artistName = 'hgjaghjkadghjkaghjkghaghdghjkaghjkaglg';
-    const token = await spotify.getToken();
-    const artists = await spotify.searchArtist(artistName, token);
-    chai.assert.notEqual(artists, null);
-    chai.assert.isArray(artists);
-    chai.assert.equal(artists.length, 0);
+  describe('searchArtist', () => {
+    it('should get a list of artists matching the given artist name', async () => {
+      const artistName = 'the beatles';
+      const token = await spotify.getToken();
+      const artists = await spotify.searchArtist(artistName, token);
+      chai.assert.notEqual(artists, null);
+      chai.assert.isArray(artists);
+      chai.assert.equal(artists.length, 20);
+      chai.assert.equal(artists[0].id, '3WrFJ7ztbogyGnTHbHJFl2');
+    });
+    it('should get an empty list of artists given a nonexisting artist name', async () => {
+      const artistName = 'hgjaghjkadghjkaghjkghaghdghjkaghjkaglg';
+      const token = await spotify.getToken();
+      const artists = await spotify.searchArtist(artistName, token);
+      chai.assert.notEqual(artists, null);
+      chai.assert.isArray(artists);
+      chai.assert.equal(artists.length, 0);
+    });
   });
 });
 
 describe('App', () => {
-  describe('GET /', () => {
+  describe('GET /search', () => {
     it('should get a single artist and multiple related artists given an artist name', (done) => {
       const artist = 'clairo';
       chai
@@ -54,6 +58,8 @@ describe('App', () => {
           done();
         });
     });
+  });
+  describe('GET /related-artists', () => {
     it('should get related artists given an artist ID', (done) => {
       const artistID = '3WrFJ7ztbogyGnTHbHJFl2';
       chai
