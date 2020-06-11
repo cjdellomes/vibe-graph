@@ -31,6 +31,22 @@ describe('SpotifyController', () => {
       chai.assert.equal(artists.length, 0);
     });
   });
+  describe('getFirstArtist', () => {
+    it('should get the first artist matching the given artist name', async () => {
+      const artistName = 'akon';
+      const token = await spotify.getToken();
+      const artist = await spotify.getFirstArtist(artistName, token);
+      chai.assert.notEqual(artist, null);
+      chai.assert.typeOf(artist, 'object');
+      chai.assert.equal(artist.id, '0z4gvV4rjIZ9wHck67ucSV');
+    });
+    it('should get a null object given a nonexisting artist name', async () => {
+      const artistName = 'hasdjkglhasdjkghasdjkghasdg';
+      const token = await spotify.getToken();
+      const artist = await spotify.getFirstArtist(artistName, token);
+      chai.assert.equal(artist, null);
+    });
+  });
 });
 
 describe('App', () => {
