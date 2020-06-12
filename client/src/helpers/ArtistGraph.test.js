@@ -1,9 +1,10 @@
 import {
   getArtistImageUrlOrDefault,
   getRelatedArtistEdge,
+  getArtistNode,
 } from './ArtistGraph';
 
-test('gets image from given artist object', () => {
+test('gets last image from given artist object', () => {
   const mockArtist = {
     images: [
       {
@@ -11,9 +12,14 @@ test('gets image from given artist object', () => {
         url: 'test.png',
         width: 640,
       },
+      {
+        height: 320,
+        url: 'test2.png',
+        width: 320,
+      },
     ],
   };
-  expect(getArtistImageUrlOrDefault(mockArtist, '')).toBe('test.png');
+  expect(getArtistImageUrlOrDefault(mockArtist, '')).toBe('test2.png');
 });
 
 test('gets empty string from artist object with empty image list', () => {
@@ -56,4 +62,36 @@ test('gets null object given an empty string artist node ID', () => {
 
 test('gets null object given an empty string related artist node ID ', () => {
   expect(getRelatedArtistEdge('abc', '')).toBe(null);
+});
+
+test('get an artist node given an artist object', () => {
+  const mockArtist = {
+    id: 'a1b2c3',
+    name: 'def',
+    images: [
+      {
+        height: 640,
+        url: 'test.png',
+        weight: 640,
+      },
+    ],
+  };
+
+  const mockArtistNode = {
+    id: mockArtist.id,
+    label: mockArtist.name,
+    title: mockArtist.name,
+    shape: 'circularImage',
+    image: mockArtist.images[0].url,
+  };
+
+  expect(getArtistNode(mockArtist)).toMatchObject(mockArtistNode);
+});
+
+test('get a null object given a null object', () => {
+  expect(getArtistNode(null)).toBe(null);
+});
+
+test('get a null object given an undefined object', () => {
+  expect(getArtistNode(undefined)).toBe(null);
 });
