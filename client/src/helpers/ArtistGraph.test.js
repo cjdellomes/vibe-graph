@@ -41,3 +41,19 @@ test('gets null object given a null artist node ID', () => {
 test('gets null object given a null related artist node ID ', () => {
   expect(getRelatedArtistEdge('abc', null)).toBe(null);
 });
+
+test('gets null object given an undefined artist node ID', () => {
+  expect(getRelatedArtistEdge(undefined, 'def')).toBe(null);
+});
+
+test('gets null object given an undefined related artist node ID ', () => {
+  expect(getRelatedArtistEdge('abc', undefined)).toBe(null);
+});
+
+test('gets null object given an empty string artist node ID', () => {
+  expect(getRelatedArtistEdge('', 'def')).toBe(null);
+});
+
+test('gets null object given an empty string related artist node ID ', () => {
+  expect(getRelatedArtistEdge('abc', '')).toBe(null);
+});

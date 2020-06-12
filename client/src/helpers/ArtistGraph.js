@@ -6,7 +6,12 @@ const getArtistImageUrlOrDefault = (artist, defaultVal) => {
 };
 
 const getRelatedArtistEdge = (artistNodeID, relatedArtistNodeID) => {
-  if (artistNodeID == null || relatedArtistNodeID == null) {
+  if (
+    artistNodeID == null
+    || relatedArtistNodeID == null
+    || artistNodeID === ''
+    || relatedArtistNodeID === ''
+  ) {
     return null;
   }
 
