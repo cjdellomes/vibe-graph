@@ -1,4 +1,4 @@
-import { getArtistImageOrDefault } from './ArtistGraph';
+import { getArtistImageUrlOrDefault } from './ArtistGraph';
 
 test('gets image from artist object', () => {
   const mockArtist = {
@@ -10,5 +10,5 @@ test('gets image from artist object', () => {
       },
     ],
   };
-  expect(getArtistImageOrDefault(mockArtist, '')).toBe('test.png');
+  expect(getArtistImageUrlOrDefault(mockArtist, '')).toBe('test.png');
 });

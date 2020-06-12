@@ -1,4 +1,4 @@
-const getArtistImageOrDefault = (artist, defaultVal) => {
+const getArtistImageUrlOrDefault = (artist, defaultVal) => {
   if (artist.images.length > 0) {
     return artist.images[artist.images.length - 1].url;
   }
@@ -24,21 +24,21 @@ const getArtistNode = (artist) => {
     return null;
   }
 
-  const artistImage = getArtistImageOrDefault(artist, '');
+  const artistImageUrl = getArtistImageUrlOrDefault(artist, '');
 
   const artistNode = {
     id: artist.id,
     label: artist.name,
     title: artist.name,
     shape: 'circularImage',
-    image: artistImage,
+    image: artistImageUrl,
   };
 
   return artistNode;
 };
 
 module.exports = {
-  getArtistImageOrDefault,
+  getArtistImageUrlOrDefault,
   getRelatedArtistEdge,
   getArtistNode,
 };
