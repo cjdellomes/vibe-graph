@@ -6,7 +6,6 @@ const logger = require('morgan');
 const cors = require('cors');
 const enforce = require('express-sslify');
 
-const indexRouter = require('./routes/index');
 const searchRouter = require('./routes/search');
 const relatedArtistsRouter = require('./routes/relatedArtists');
 
@@ -21,15 +20,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(`${__dirname}/../client`, 'build')));
-} else {
-  app.use(express.static(path.join(__dirname, 'public')));
-}
+app.use(express.static(path.join(`${__dirname}/../client`, 'build')));
 
 app.use(cors());
 
-app.use('/', indexRouter);
 app.use('/search', searchRouter);
 app.use('/related-artists', relatedArtistsRouter);
 
