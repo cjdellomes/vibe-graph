@@ -2,45 +2,7 @@ import React from 'react';
 import './App.css';
 import Graph from 'react-graph-vis';
 import ArtistForm from './components/ArtistForm';
-
-const getArtistImageOrDefault = (artist, defaultVal) => {
-  if (artist.images.length > 0) {
-    return artist.images[artist.images.length - 1].url;
-  }
-  return defaultVal;
-};
-
-const getRelatedArtistEdge = (artistNodeID, relatedArtistNodeID) => {
-  if (artistNodeID == null || relatedArtistNodeID == null) {
-    return null;
-  }
-
-  const relatedArtistEdge = {
-    id: `${artistNodeID}:${relatedArtistNodeID}`,
-    from: artistNodeID,
-    to: relatedArtistNodeID,
-  };
-
-  return relatedArtistEdge;
-};
-
-const getArtistNode = (artist) => {
-  if (artist == null) {
-    return null;
-  }
-
-  const artistImage = getArtistImageOrDefault(artist, '');
-
-  const artistNode = {
-    id: artist.id,
-    label: artist.name,
-    title: artist.name,
-    shape: 'circularImage',
-    image: artistImage,
-  };
-
-  return artistNode;
-};
+import { getRelatedArtistEdge, getArtistNode } from './helpers/ArtistGraph';
 
 class App extends React.Component {
   constructor(props) {
