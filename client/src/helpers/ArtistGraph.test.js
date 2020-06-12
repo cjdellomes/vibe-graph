@@ -12,3 +12,10 @@ test('gets image from artist object', () => {
   };
   expect(getArtistImageUrlOrDefault(mockArtist, '')).toBe('test.png');
 });
+
+test('gets empty string from artist object with empty image list', () => {
+  const mockArtist = {
+    images: [],
+  };
+  expect(getArtistImageUrlOrDefault(mockArtist, '')).toBe('');
+});
