@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<form
+  className="transparent-blur"
+  id="form-box"
+  onSubmit={[Function]}
+>
+  <button
+    onClick={[Function]}
+    type="button"
+  >
+    Reset
+  </button>
+  <button
+    onClick={[Function]}
+    type="button"
+  >
+    Search
+  </button>
+  <div
+    id="search-field"
+  >
+    <input
+      onChange={[Function]}
+      placeholder="Artist Name"
+      type="text"
+      value="test"
+    />
+  </div>
+</form>
+`;
