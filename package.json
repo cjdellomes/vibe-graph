@@ -54,11 +54,13 @@
     "build": "npm run build-client && npm run build-server",
     "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run start\" ",
     "test": "npm run test-client && npm run test-server",
+    "coverage": "npm run coverage-client && npm run coverage-server",
     "build-client": "cd client && npm install && npm run build",
     "build-server": "cd server && npm install",
     "test-client": "cd client && npm install && npm run test",
     "test-server": "cd server && npm install && npm run test",
-    "coverage": "cd server && npm run coverage"
+    "coverage-client": "cd client && npm run coverage",
+    "coverage-server": "cd server && npm run coverage"
   },
   "repository": {
     "type": "git",

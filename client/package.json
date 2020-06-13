@@ -59,7 +59,8 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --watchAll=false"
+    "test": "node scripts/test.js --watchAll=false",
+    "coverage": "node scripts/test.js --coverage --watchAll=false"
   },
   "browserslist": {
     "production": [
@@ -85,6 +86,9 @@
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,ts,tsx}",
       "!src/**/*.d.ts"
+    ],
+    "coveragePathIgnorePatterns": [
+      "src/serviceWorker.js"
     ],
     "setupFiles": [
       "react-app-polyfill/jsdom"
