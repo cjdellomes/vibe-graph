@@ -10,6 +10,7 @@
 # testing
 /coverage
 /server/.nyc_output
+/client/coverage
 
 # production
 /build
