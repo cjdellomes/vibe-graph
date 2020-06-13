@@ -7,12 +7,14 @@ exports[`renders correctly 1`] = `
   onSubmit={[Function]}
 >
   <button
+    id="graph-reset"
     onClick={[Function]}
     type="button"
   >
     Reset
   </button>
   <button
+    id="artist-submit"
     onClick={[Function]}
     type="button"
   >

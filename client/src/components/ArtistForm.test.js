@@ -59,6 +59,8 @@ it('calls the artist submit callback function when input is submitted', () => {
     />,
   );
 
-  component.find('submit').simulate('click');
+  component.find('#artist-submit').simulate('click', {
+    preventDefault: () => {},
+  });
   expect(mockHandleArtistSubmit).toHaveBeenCalled();
 });

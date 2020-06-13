@@ -37,10 +37,10 @@ class ArtistForm extends React.Component {
         className="transparent-blur"
         onSubmit={this.handleSubmit}
       >
-        <button type="button" onClick={this.handleReset}>
+        <button type="button" id="graph-reset" onClick={this.handleReset}>
           Reset
         </button>
-        <button type="button" onClick={this.handleSubmit}>
+        <button type="button" id="artist-submit" onClick={this.handleSubmit}>
           Search
         </button>
         <div id="search-field">
