@@ -45,7 +45,6 @@ it('calls the artist change callback function when input text changes', () => {
   expect(mockHandleArtistChange).toHaveBeenCalledWith('test');
 });
 
-// testing something in ci
 it('calls the artist submit callback function when input is submitted', () => {
   const mockHandleArtistChange = jest.fn();
   const mockHandleArtistSubmit = jest.fn();
