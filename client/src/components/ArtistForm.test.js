@@ -1,7 +1,10 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import { shallow } from 'enzyme';
+import { shallow, configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
 import ArtistForm from './ArtistForm';
+
+configure({ adapter: new Adapter() });
 
 it('renders correctly', () => {
   const mockHandleArtistChange = jest.fn();
