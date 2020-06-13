@@ -64,3 +64,23 @@ it('calls the artist submit callback function when input is submitted', () => {
   });
   expect(mockHandleArtistSubmit).toHaveBeenCalled();
 });
+
+it('calls the graph reset callback function when the reset button is clicked', () => {
+  const mockHandleArtistChange = jest.fn();
+  const mockHandleArtistSubmit = jest.fn();
+  const mockHandleGraphReset = jest.fn();
+
+  const component = shallow(
+    <ArtistForm
+      searchValue=""
+      onArtistChange={mockHandleArtistChange}
+      onArtistSubmit={mockHandleArtistSubmit}
+      onGraphReset={mockHandleGraphReset}
+    />,
+  );
+
+  component.find('#graph-reset').simulate('click', {
+    preventDefault: () => {},
+  });
+  expect(mockHandleGraphReset).toHaveBeenCalled();
+});
