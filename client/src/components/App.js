@@ -1,8 +1,8 @@
 import React from 'react';
 import './App.css';
 import Graph from 'react-graph-vis';
-import ArtistForm from './components/ArtistForm';
-import { getRelatedArtistEdge, getArtistNode } from './helpers/ArtistGraph';
+import ArtistForm from './ArtistForm';
+import { getRelatedArtistEdge, getArtistNode } from '../helpers/ArtistGraph';
 
 class App extends React.Component {
   constructor(props) {
