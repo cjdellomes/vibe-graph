@@ -22,7 +22,7 @@ it('renders correctly', () => {
   expect(tree).toMatchSnapshot();
 });
 
-it('calls the on artist change callback function when input text changes', () => {
+it('calls the artist change callback function when input text changes', () => {
   const mockHandleArtistChange = jest.fn();
   const mockHandleArtistSubmit = jest.fn();
   const mockHandleGraphReset = jest.fn();
@@ -43,4 +43,22 @@ it('calls the on artist change callback function when input text changes', () =>
 
   component.find('input').simulate('change', event);
   expect(mockHandleArtistChange).toHaveBeenCalledWith('test');
+});
+
+it('calls the artist submit callback function when input is submitted', () => {
+  const mockHandleArtistChange = jest.fn();
+  const mockHandleArtistSubmit = jest.fn();
+  const mockHandleGraphReset = jest.fn();
+
+  const component = shallow(
+    <ArtistForm
+      searchValue=""
+      onArtistChange={mockHandleArtistChange}
+      onArtistSubmit={mockHandleArtistSubmit}
+      onGraphReset={mockHandleGraphReset}
+    />,
+  );
+
+  component.find('submit').simulate('click');
+  expect(mockHandleArtistSubmit).toHaveBeenCalled();
 });
