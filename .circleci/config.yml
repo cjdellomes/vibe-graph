@@ -22,13 +22,13 @@ jobs:
     execution:
       name: node/default
     steps:
-      -checkout
-      -node/with-cache:
-        steps:
-          - codecov/upload:
-              file: { { client/coverage } }
-          - codecov/upload:
-              file: { { server/coverage } }
+      - checkout
+      - node/with-cache:
+          steps:
+            - codecov/upload:
+                file: { { client/coverage } }
+            - codecov/upload:
+                file: { { server/coverage } }
 workflows:
   build-test-deploy:
     jobs:
