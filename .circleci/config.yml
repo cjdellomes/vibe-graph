@@ -19,7 +19,7 @@ jobs:
             - codecov/upload:
                 file: { { server/coverage } }
   upload-coverage:
-    execution:
+    executor:
       name: node/default
     steps:
       - checkout
