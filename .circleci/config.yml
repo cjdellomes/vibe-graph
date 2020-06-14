@@ -15,10 +15,10 @@ jobs:
             - run: npm build
             - run: npm test
             - codecov/upload:
-                file: 'client/coverage'
+                file: 'client/coverage/lcov.info'
             - codecov/upload:
-                file: 'server/coverage'
-  upload-coverage:
+                file: 'server/coverage/coverage.lcov'
+    upload-coverage:
     executor:
       name: node/default
     steps:
@@ -26,9 +26,9 @@ jobs:
       - node/with-cache:
           steps:
             - codecov/upload:
-                file: 'client/coverage'
+                file: 'client/coverage/lcov.info'
             - codecov/upload:
-                file: 'server/coverage'
+                file: 'server/coverage/coverage.lcov'
 workflows:
   build-test-deploy:
     jobs:
