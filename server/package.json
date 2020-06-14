@@ -6,7 +6,7 @@
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
     "test": "mocha --exit",
-    "coverage": "nyc report --reporter=text-lcov > coverage/coverage.lcov"
+    "coverage": "nyc report --reporter=text-lcov > coverage/coverage.lcov && codecov"
   },
   "dependencies": {
     "chai": "^4.2.0",

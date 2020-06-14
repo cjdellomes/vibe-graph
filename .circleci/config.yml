@@ -2,7 +2,6 @@ version: 2.1
 orbs:
   node: circleci/node@1.1.6
   heroku: circleci/heroku@1.0.1
-  codecov: codecov/codecov@1.1.0
 jobs:
   build-and-test:
     executor:
@@ -14,11 +13,7 @@ jobs:
             - run: npm install
             - run: npm build
             - run: npm test
-            - run: npm coverage
-            - codecov/upload:
-                file: '/home/circleci/vibe-graph/client/coverage/lcov.info'
-            - codecov/upload:
-                file: '/home/circleci/vibe-graph/server/coverage/coverage.lcov'
+            - run: npm run coverage
 workflows:
   build-test-deploy:
     jobs:

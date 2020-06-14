@@ -60,7 +60,7 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --watchAll=false",
-    "coverage": "node scripts/test.js --collectCoverage=true --watchAll=false"
+    "coverage": "node scripts/test.js --collectCoverage=true --watchAll=false && codecov"
   },
   "browserslist": {
     "production": [
