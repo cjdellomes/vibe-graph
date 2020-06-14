@@ -12,8 +12,8 @@ jobs:
       - node/with-cache:
           steps:
             - run: npm install
-            - run: npm build
-            - run: npm test
+            - run: npm run build
+            - run: npm run test
             - run: npm run coverage
             - codecov/upload
 workflows:
