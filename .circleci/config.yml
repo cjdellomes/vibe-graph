@@ -14,7 +14,10 @@ jobs:
             - run: npm install
             - run: npm build
             - run: npm test
-            - codecov/upload
+            - codecov/upload:
+                file: '/home/circleci/vibe-graph/client/coverage/lcov.info'
+            - codecov/upload:
+                file: '/home/circleci/vibe-graph/server/coverage/coverage.lcov'
 workflows:
   build-test-deploy:
     jobs:
