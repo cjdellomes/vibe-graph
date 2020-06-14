@@ -18,17 +18,6 @@ jobs:
                 file: 'client/coverage/lcov.info'
             - codecov/upload:
                 file: 'server/coverage/coverage.lcov'
-    upload-coverage:
-    executor:
-      name: node/default
-    steps:
-      - checkout
-      - node/with-cache:
-          steps:
-            - codecov/upload:
-                file: 'client/coverage/lcov.info'
-            - codecov/upload:
-                file: 'server/coverage/coverage.lcov'
 workflows:
   build-test-deploy:
     jobs:
