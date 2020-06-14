@@ -15,9 +15,9 @@ jobs:
             - run: npm build
             - run: npm test
             - codecov/upload:
-                file: { { client/coverage } }
+                file: { { 'client/coverage' } }
             - codecov/upload:
-                file: { { server/coverage } }
+                file: { { 'server/coverage' } }
   upload-coverage:
     executor:
       name: node/default
@@ -26,9 +26,9 @@ jobs:
       - node/with-cache:
           steps:
             - codecov/upload:
-                file: { { client/coverage } }
+                file: { { 'client/coverage' } }
             - codecov/upload:
-                file: { { server/coverage } }
+                file: { { 'server/coverage' } }
 workflows:
   build-test-deploy:
     jobs:
