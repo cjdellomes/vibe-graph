@@ -69,4 +69,4 @@ The frontend was built using [React](https://reactjs.org/) while the backend was
 
 The graph is rendered using [vis.js](http://visjs.org) and, more sepcifically, the [vis-react](https://www.npmjs.com/package/vis-react) npm package.
 
-Most of the styling is based on the [Wikipedia-Map](https://github.com/controversial/wikipedia-map) project by [Luke Deen Taylor](https://luke.deentaylor.com/#).
+Most of the styling is based on the [Wikipedia Map](https://github.com/controversial/wikipedia-map) project by [Luke Deen Taylor](https://luke.deentaylor.com/#).
