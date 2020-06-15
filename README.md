@@ -1,5 +1,7 @@
 # vibe-graph
 
+[![cjdellomes](https://circleci.com/gh/cjdellomes/vibe-graph.svg?style=svg)](https://app.circleci.com/pipelines/github/cjdellomes/vibe-graph)
+
 Web app for visualizing the network graph of Spotify related artists. Try it out at [vibe-graph.com](https://www.vibe-graph.com)
 
 ## Usage
