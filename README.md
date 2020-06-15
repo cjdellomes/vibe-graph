@@ -1,4 +1,4 @@
-# vibe-graph
+# Vibe Graph
 
 [![cjdellomes](https://circleci.com/gh/cjdellomes/vibe-graph.svg?style=svg)](https://app.circleci.com/pipelines/github/cjdellomes/vibe-graph)
 
