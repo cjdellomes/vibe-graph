@@ -71,6 +71,6 @@ All the artist and related artist data comes from the [Spotify Web API](https://
 
 The frontend was built using [React](https://reactjs.org/) while the backend was created with [Express](https://expressjs.com/).
 
-The graph is rendered using [vis.js](http://visjs.org) and, more sepcifically, the [vis-react](https://www.npmjs.com/package/vis-react) npm package.
+The graph is rendered using [vis.js](http://visjs.org) and, more sepcifically, the [react-graph-vis](https://www.npmjs.com/package/react-graph-vis) npm package.
 
 Most of the styling is based on the [Wikipedia Map](https://github.com/controversial/wikipedia-map) project by [Luke Deen Taylor](https://luke.deentaylor.com/#).
