@@ -42,8 +42,54 @@ const getArtistNode = (artist) => {
   return artistNode;
 };
 
+const addArtistToGraph = (graph, artist) => {
+  if (artist == null) {
+    return;
+  }
+
+  const { nodes, nodeSet } = graph;
+
+  const artistNode = getArtistNode(artist);
+
+  if (!nodeSet.has(artistNode.id)) {
+    nodeSet.add(artistNode.id);
+    nodes.push(artistNode);
+  }
+};
+
+const addRelatedArtistsToGraph = (graph, artistNodeID, relatedArtists) => {
+  if (relatedArtists == null) {
+    return;
+  }
+
+  const {
+    nodes, edges, nodeSet, edgeSet,
+  } = graph;
+
+  for (let i = 0; i < relatedArtists.length; i += 1) {
+    const relatedArtist = relatedArtists[i];
+
+    const relatedArtistNode = getArtistNode(relatedArtist);
+    const relatedArtistEdge = getRelatedArtistEdge(
+      artistNodeID,
+      relatedArtistNode.id,
+    );
+
+    if (!nodeSet.has(relatedArtistNode.id)) {
+      nodeSet.add(relatedArtistNode.id);
+      nodes.push(relatedArtistNode);
+    }
+    if (!edgeSet.has(relatedArtistEdge.id)) {
+      edgeSet.add(relatedArtistEdge.id);
+      edges.push(relatedArtistEdge);
+    }
+  }
+};
+
 module.exports = {
   getArtistImageUrlOrDefault,
   getRelatedArtistEdge,
   getArtistNode,
+  addArtistToGraph,
+  addRelatedArtistsToGraph,
 };

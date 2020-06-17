@@ -1,5 +1,7 @@
 node_modules
+client/build
 client/config
+client/coverage
 client/scripts
 client/node_modules
 server/node_modules
