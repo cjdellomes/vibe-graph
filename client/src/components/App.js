@@ -2,9 +2,7 @@ import React from 'react';
 import './App.css';
 import Graph from 'react-graph-vis';
 import ArtistForm from './ArtistForm';
-import {
-  addArtistToGraph, addRelatedArtistsToGraph,
-} from '../helpers/ArtistGraph';
+import { addArtistToGraph, addRelatedArtistsToGraph } from '../helpers/ArtistGraph';
 
 class App extends React.Component {
   constructor(props) {
