@@ -21,9 +21,9 @@ class App extends React.Component {
       graph: {
         nodes: [],
         edges: [],
+        nodeSet: new Set(),
+        edgeSet: new Set(),
       },
-      drawnNodes: new Set(),
-      drawnEdges: new Set(),
       loadedArtists: new Set(),
     };
 
@@ -107,9 +107,9 @@ class App extends React.Component {
       graph: {
         nodes: [],
         edges: [],
+        nodeSet: new Set(),
+        edgeSet: new Set(),
       },
-      drawnNodes: new Set(),
-      drawnEdges: new Set(),
       loadedArtists: new Set(),
     });
   }
@@ -130,12 +130,13 @@ class App extends React.Component {
     const { graph } = this.state;
     const nodes = graph.nodes.slice();
     const edges = graph.edges.slice();
+    const nodeSet = new Set(graph.nodeSet);
+    const edgeSet = new Set(graph.edgeSet);
 
     const artistNode = getArtistNode(artist);
 
-    const { drawnNodes } = this.state;
-    if (!drawnNodes.has(artistNode.id)) {
-      drawnNodes.add(artistNode.id);
+    if (!nodeSet.has(artistNode.id)) {
+      nodeSet.add(artistNode.id);
       nodes.push(artistNode);
     }
 
@@ -143,6 +144,8 @@ class App extends React.Component {
       graph: {
         nodes,
         edges,
+        nodeSet,
+        edgeSet,
       },
     });
   }
@@ -155,6 +158,8 @@ class App extends React.Component {
     const { graph } = this.state;
     const nodes = graph.nodes.slice();
     const edges = graph.edges.slice();
+    const nodeSet = new Set(graph.nodeSet);
+    const edgeSet = new Set(graph.edgeSet);
 
     for (let i = 0; i < relatedArtists.length; i += 1) {
       const relatedArtist = relatedArtists[i];
@@ -165,13 +170,12 @@ class App extends React.Component {
         relatedArtistNode.id,
       );
 
-      const { drawnNodes, drawnEdges } = this.state;
-      if (!drawnNodes.has(relatedArtistNode.id)) {
-        drawnNodes.add(relatedArtistNode.id);
+      if (!nodeSet.has(relatedArtistNode.id)) {
+        nodeSet.add(relatedArtistNode.id);
         nodes.push(relatedArtistNode);
       }
-      if (!drawnEdges.has(relatedArtistEdge.id)) {
-        drawnEdges.add(relatedArtistEdge.id);
+      if (!edgeSet.has(relatedArtistEdge.id)) {
+        edgeSet.add(relatedArtistEdge.id);
         edges.push(relatedArtistEdge);
       }
     }
@@ -180,6 +184,8 @@ class App extends React.Component {
       graph: {
         nodes,
         edges,
+        nodeSet,
+        edgeSet,
       },
     });
   }
