@@ -2,6 +2,7 @@ import {
   getArtistImageUrlOrDefault,
   getRelatedArtistEdge,
   getArtistNode,
+  addArtistToGraph,
 } from './ArtistGraph';
 
 it('gets the last image in a given artist object', () => {
@@ -94,4 +95,85 @@ it('gets a null object given a null object', () => {
 
 it('gets a null object given an undefined object', () => {
   expect(getArtistNode(undefined)).toBe(null);
+});
+
+it('does not change the graph when given a null artist', () => {
+  const mockGraph = {
+    nodes: [],
+    edges: [],
+    nodeSet: new Set(),
+    edgeSet: new Set(),
+  };
+  addArtistToGraph(mockGraph, null);
+  expect(mockGraph.nodes.length).toBe(0);
+  expect(mockGraph.edges.length).toBe(0);
+  expect(mockGraph.nodeSet.size).toBe(0);
+  expect(mockGraph.edgeSet.size).toBe(0);
+});
+
+it('adds the given artist to the given empty graph', () => {
+  const mockGraph = {
+    nodes: [],
+    edges: [],
+    nodeSet: new Set(),
+    edgeSet: new Set(),
+  };
+  const mockArtist = {
+    id: 'abc',
+    name: 'def',
+    images: [
+      {
+        height: 320,
+        url: 'xyz',
+        width: 320,
+      },
+    ],
+  };
+
+  addArtistToGraph(mockGraph, mockArtist);
+  expect(mockGraph.nodes.length).toBe(1);
+  expect(mockGraph.edges.length).toBe(0);
+  expect(mockGraph.nodeSet.size).toBe(1);
+  expect(mockGraph.edgeSet.size).toBe(0);
+  expect(mockGraph.nodes[0].id).toBe('abc');
+  expect(mockGraph.nodes[0].title).toBe('def');
+  expect(mockGraph.nodes[0].image).toBe('xyz');
+  expect(mockGraph.nodeSet.has('abc'));
+});
+
+it('does not add the already existing artist to the given graph', () => {
+  const mockGraph = {
+    nodes: [
+      {
+        id: 'abc',
+        label: 'def',
+        title: 'def',
+        shape: 'circularImage',
+        image: 'xyz',
+      },
+    ],
+    edges: [],
+    nodeSet: new Set(['abc']),
+    edgeSet: new Set(),
+  };
+  const mockArtist = {
+    id: 'abc',
+    name: 'def',
+    images: [
+      {
+        height: 320,
+        url: 'xyz',
+        width: 320,
+      },
+    ],
+  };
+
+  addArtistToGraph(mockGraph, mockArtist);
+  expect(mockGraph.nodes.length).toBe(1);
+  expect(mockGraph.edges.length).toBe(0);
+  expect(mockGraph.nodeSet.size).toBe(1);
+  expect(mockGraph.edgeSet.size).toBe(0);
+  expect(mockGraph.nodes[0].id).toBe('abc');
+  expect(mockGraph.nodes[0].title).toBe('def');
+  expect(mockGraph.nodes[0].image).toBe('xyz');
 });
