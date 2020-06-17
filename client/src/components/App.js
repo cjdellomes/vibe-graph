@@ -2,7 +2,9 @@ import React from 'react';
 import './App.css';
 import Graph from 'react-graph-vis';
 import ArtistForm from './ArtistForm';
-import { getRelatedArtistEdge, getArtistNode } from '../helpers/ArtistGraph';
+import {
+  addArtistToGraph, addRelatedArtistsToGraph,
+} from '../helpers/ArtistGraph';
 
 class App extends React.Component {
   constructor(props) {
@@ -11,8 +13,6 @@ class App extends React.Component {
     this.handleArtistSubmit = this.handleArtistSubmit.bind(this);
     this.handleGraphReset = this.handleGraphReset.bind(this);
     this.handleNodeClick = this.handleNodeClick.bind(this);
-    this.addArtistToGraph = this.addArtistToGraph.bind(this);
-    this.addRelatedArtistsToGraph = this.addRelatedArtistsToGraph.bind(this);
     this.drawArtistSearchResults = this.drawArtistSearchResults.bind(this);
     this.drawRelatedArtists = this.drawRelatedArtists.bind(this);
 
@@ -67,7 +67,24 @@ class App extends React.Component {
       .then(
         (result) => {
           const relatedArtists = result.related_artists;
-          this.addRelatedArtistsToGraph(artistID, relatedArtists);
+
+          const { graph } = this.state;
+          const {
+            nodes, edges, nodeSet, edgeSet,
+          } = graph;
+
+          const graphCopy = {
+            nodes: Array.from(nodes),
+            edges: Array.from(edges),
+            nodeSet: new Set(nodeSet),
+            edgeSet: new Set(edgeSet),
+          };
+
+          addRelatedArtistsToGraph(graphCopy, artistID, relatedArtists);
+
+          this.setState({
+            graph: graphCopy,
+          });
         },
         (error) => {
           console.log(error);
@@ -83,8 +100,24 @@ class App extends React.Component {
           const { artist } = result;
           const relatedArtists = result.related_artists;
 
-          this.addArtistToGraph(artist);
-          this.addRelatedArtistsToGraph(artist.id, relatedArtists);
+          const { graph } = this.state;
+          const {
+            nodes, edges, nodeSet, edgeSet,
+          } = graph;
+
+          const graphCopy = {
+            nodes: Array.from(nodes),
+            edges: Array.from(edges),
+            nodeSet: new Set(nodeSet),
+            edgeSet: new Set(edgeSet),
+          };
+
+          addArtistToGraph(graphCopy, artist);
+          addRelatedArtistsToGraph(graphCopy, artist.id, relatedArtists);
+
+          this.setState({
+            graph: graphCopy,
+          });
         },
         (error) => {
           console.log(error);
@@ -120,74 +153,6 @@ class App extends React.Component {
 
   handleArtistChange(searchValue) {
     this.setState({ searchValue });
-  }
-
-  addArtistToGraph(artist) {
-    if (artist == null) {
-      return;
-    }
-
-    const { graph } = this.state;
-    const nodes = graph.nodes.slice();
-    const edges = graph.edges.slice();
-    const nodeSet = new Set(graph.nodeSet);
-    const edgeSet = new Set(graph.edgeSet);
-
-    const artistNode = getArtistNode(artist);
-
-    if (!nodeSet.has(artistNode.id)) {
-      nodeSet.add(artistNode.id);
-      nodes.push(artistNode);
-    }
-
-    this.setState({
-      graph: {
-        nodes,
-        edges,
-        nodeSet,
-        edgeSet,
-      },
-    });
-  }
-
-  addRelatedArtistsToGraph(artistNodeID, relatedArtists) {
-    if (relatedArtists == null) {
-      return;
-    }
-
-    const { graph } = this.state;
-    const nodes = graph.nodes.slice();
-    const edges = graph.edges.slice();
-    const nodeSet = new Set(graph.nodeSet);
-    const edgeSet = new Set(graph.edgeSet);
-
-    for (let i = 0; i < relatedArtists.length; i += 1) {
-      const relatedArtist = relatedArtists[i];
-
-      const relatedArtistNode = getArtistNode(relatedArtist);
-      const relatedArtistEdge = getRelatedArtistEdge(
-        artistNodeID,
-        relatedArtistNode.id,
-      );
-
-      if (!nodeSet.has(relatedArtistNode.id)) {
-        nodeSet.add(relatedArtistNode.id);
-        nodes.push(relatedArtistNode);
-      }
-      if (!edgeSet.has(relatedArtistEdge.id)) {
-        edgeSet.add(relatedArtistEdge.id);
-        edges.push(relatedArtistEdge);
-      }
-    }
-
-    this.setState({
-      graph: {
-        nodes,
-        edges,
-        nodeSet,
-        edgeSet,
-      },
-    });
   }
 
   render() {
