@@ -7,10 +7,10 @@ const getArtistImageUrlOrDefault = (artist, defaultVal) => {
 
 const getRelatedArtistEdge = (artistNodeID, relatedArtistNodeID) => {
   if (
-    artistNodeID == null ||
-    relatedArtistNodeID == null ||
-    artistNodeID === '' ||
-    relatedArtistNodeID === ''
+    artistNodeID == null
+    || relatedArtistNodeID == null
+    || artistNodeID === ''
+    || relatedArtistNodeID === ''
   ) {
     return null;
   }
@@ -58,11 +58,18 @@ const addArtistToGraph = (graph, artist) => {
 };
 
 const addRelatedArtistsToGraph = (graph, artistNodeID, relatedArtists) => {
-  if (relatedArtists == null) {
+  if (
+    graph == null
+    || artistNodeID == null
+    || artistNodeID === ''
+    || relatedArtists == null
+  ) {
     return;
   }
 
-  const { nodes, edges, nodeSet, edgeSet } = graph;
+  const {
+    nodes, edges, nodeSet, edgeSet,
+  } = graph;
 
   for (let i = 0; i < relatedArtists.length; i += 1) {
     const relatedArtist = relatedArtists[i];

@@ -3,6 +3,7 @@ import {
   getRelatedArtistEdge,
   getArtistNode,
   addArtistToGraph,
+  addRelatedArtistsToGraph,
 } from './ArtistGraph';
 
 describe('getArtistImageUrlOrDefault', () => {
@@ -200,5 +201,158 @@ describe('addArtistToGraph', () => {
     expect(mockGraph.nodes[0].id).toBe('abc');
     expect(mockGraph.nodes[0].title).toBe('def');
     expect(mockGraph.nodes[0].image).toBe('xyz');
+  });
+});
+
+describe('addRelatedArtistsToGraph', () => {
+  it('does nothing when the graph is null', () => {
+    const mockGraph = null;
+    addRelatedArtistsToGraph(null, 'abc', []);
+    expect(mockGraph).toBe(null);
+  });
+
+  it('adds the related artists to the graph', () => {
+    const mockGraph = {
+      nodes: [
+        {
+          id: 'abc',
+          label: 'def',
+          title: 'def',
+          shape: 'circularImage',
+          image: 'xyz',
+        },
+      ],
+      edges: [],
+      nodeSet: new Set(['abc']),
+      edgeSet: new Set(),
+    };
+    const mockRelatedArtists = [
+      {
+        id: 'ijk',
+        name: 'uvw',
+        images: [
+          {
+            height: 320,
+            url: 'qrs',
+            width: 320,
+          },
+        ],
+      },
+      {
+        id: 'adhgjkasg',
+        name: 'qptiasdg',
+        images: [
+          {
+            height: 320,
+            url: 'adghjkadghag',
+            width: 320,
+          },
+        ],
+      },
+    ];
+
+    addRelatedArtistsToGraph(mockGraph, 'abc', mockRelatedArtists);
+    expect(mockGraph.nodes.length).toBe(3);
+    expect(mockGraph.edges.length).toBe(2);
+    expect(mockGraph.nodeSet.size).toBe(3);
+    expect(mockGraph.edgeSet.size).toBe(2);
+    expect(mockGraph.nodes[0].id).toBe('abc');
+    expect(mockGraph.nodeSet.has(mockRelatedArtists[0].id));
+    expect(mockGraph.nodeSet.has(mockRelatedArtists[1].id));
+    expect(mockGraph.edgeSet.has('abc:ijk'));
+    expect(mockGraph.edgeSet.has('abc:adhgjkasg'));
+  });
+
+  it('does not add related artist nodes already in the graph', () => {
+    const mockGraph = {
+      nodes: [
+        {
+          id: 'abc',
+          label: 'def',
+          title: 'def',
+          shape: 'circularImage',
+          image: 'xyz',
+        },
+        {
+          id: 'gasdgasdgasdg',
+          label: 'asdhgashah',
+          title: 'asdhgashah',
+          shape: 'circularImage',
+          image: 'hadfhadfhdsh',
+        },
+      ],
+      edges: [],
+      nodeSet: new Set(['abc', 'gasdgasdgasdg']),
+      edgeSet: new Set(),
+    };
+    const mockRelatedArtists = [
+      {
+        id: 'gasdgasdgasdg',
+        name: 'asdhgashah',
+        images: [
+          {
+            height: 320,
+            url: 'hadfhadfhdsh',
+            width: 320,
+          },
+        ],
+      },
+    ];
+
+    addRelatedArtistsToGraph(mockGraph, 'abc', mockRelatedArtists);
+    expect(mockGraph.nodes.length).toBe(2);
+    expect(mockGraph.nodeSet.size).toBe(2);
+    expect(mockGraph.nodes[0].id).toBe('abc');
+    expect(mockGraph.nodes[1].id).toBe('gasdgasdgasdg');
+    expect(mockGraph.nodeSet.has(mockRelatedArtists[0].id));
+  });
+
+  it('does not add related artist edges already in the graph', () => {
+    const mockGraph = {
+      nodes: [
+        {
+          id: 'abc',
+          label: 'def',
+          title: 'def',
+          shape: 'circularImage',
+          image: 'xyz',
+        },
+        {
+          id: 'gasdgasdgasdg',
+          label: 'asdhgashah',
+          title: 'asdhgashah',
+          shape: 'circularImage',
+          image: 'hadfhadfhdsh',
+        },
+      ],
+      edges: [
+        {
+          id: 'abc:gasdgasdgasdg',
+          from: 'abc',
+          to: 'gasdgasdgasdg',
+        },
+      ],
+      nodeSet: new Set(['abc', 'gasdgasdgasdg']),
+      edgeSet: new Set(['abc:gasdgasdgasdg']),
+    };
+    const mockRelatedArtists = [
+      {
+        id: 'gasdgasdgasdg',
+        name: 'asdhgashah',
+        images: [
+          {
+            height: 320,
+            url: 'hadfhadfhdsh',
+            width: 320,
+          },
+        ],
+      },
+    ];
+
+    addRelatedArtistsToGraph(mockGraph, 'abc', mockRelatedArtists);
+    expect(mockGraph.edges.length).toBe(1);
+    expect(mockGraph.edgeSet.size).toBe(1);
+    expect(mockGraph.edges[0].id).toBe('abc:gasdgasdgasdg');
+    expect(mockGraph.edgeSet.has('abc:gasdgasdgasdg'));
   });
 });
