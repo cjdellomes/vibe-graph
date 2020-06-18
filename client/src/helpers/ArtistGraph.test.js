@@ -104,6 +104,23 @@ describe('getArtistNode', () => {
 });
 
 describe('addArtistToGraph', () => {
+  it('does nothing when the graph is null', () => {
+    const mockGraph = null;
+    const mockArtist = {
+      id: 'abc',
+      name: 'def',
+      images: [
+        {
+          height: 320,
+          url: 'xyz',
+          width: 320,
+        },
+      ],
+    };
+    addArtistToGraph(null, mockArtist);
+    expect(mockGraph).toBe(null);
+  });
+
   it('does not change the graph when given a null artist', () => {
     const mockGraph = {
       nodes: [],
