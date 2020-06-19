@@ -2,7 +2,10 @@ import React from 'react';
 import './App.css';
 import Graph from 'react-graph-vis';
 import ArtistForm from './ArtistForm';
-import { addArtistToGraph, addRelatedArtistsToGraph } from '../helpers/ArtistGraph';
+import {
+  addArtistToGraph,
+  addRelatedArtistsToGraph,
+} from '../helpers/ArtistGraph';
 
 class App extends React.Component {
   constructor(props) {
@@ -23,39 +26,37 @@ class App extends React.Component {
         edgeSet: new Set(),
       },
       loadedArtists: new Set(),
-    };
-
-    this.options = {
-      autoResize: true,
-      layout: {
-        hierarchical: false,
-      },
-      edges: {
-        width: 0.15,
-        color: { inherit: 'from' },
-        smooth: {
-          type: 'continuous',
+      graphOptions: {
+        autoResize: true,
+        layout: {
+          hierarchical: false,
+        },
+        edges: {
+          width: 0.15,
+          color: { inherit: 'from' },
+          smooth: {
+            type: 'continuous',
+          },
+        },
+        physics: {
+          enabled: true,
+          repulsion: {
+            centralGravity: 0.0,
+            springLength: 50,
+            springConstant: 0.01,
+            nodeDistance: 200,
+            damping: 0.09,
+          },
+          solver: 'repulsion',
+        },
+        interaction: {
+          hover: true,
+          tooltipDelay: 200,
         },
       },
-      physics: {
-        enabled: true,
-        repulsion: {
-          centralGravity: 0.0,
-          springLength: 50,
-          springConstant: 0.01,
-          nodeDistance: 200,
-          damping: 0.09,
-        },
-        solver: 'repulsion',
+      events: {
+        selectNode: this.handleNodeClick,
       },
-      interaction: {
-        hover: true,
-        tooltipDelay: 200,
-      },
-    };
-
-    this.events = {
-      selectNode: this.handleNodeClick,
     };
   }
 
@@ -154,7 +155,9 @@ class App extends React.Component {
   }
 
   render() {
-    const { searchValue, graph } = this.state;
+    const {
+      searchValue, graph, graphOptions, events,
+    } = this.state;
     return (
       // eslint-disable-next-line react/jsx-filename-extension
       <div className="container">
@@ -165,7 +168,7 @@ class App extends React.Component {
           onGraphReset={this.handleGraphReset}
         />
         <div className="fullscreen">
-          <Graph graph={graph} options={this.options} events={this.events} />
+          <Graph graph={graph} options={graphOptions} events={events} />
         </div>
       </div>
     );
