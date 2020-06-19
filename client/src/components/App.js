@@ -60,6 +60,11 @@ class App extends React.Component {
     };
   }
 
+  // TODO: Split up and move the fetch function
+  // Fetch function should just fetch and return the related artists
+  // Move the simplified fetch function to the helper functions file
+  // The state changing should stay here and just use the helper
+  // function to retrieve the related artists for state changing
   drawRelatedArtists(artistID) {
     fetch(`/related-artists/${encodeURIComponent(artistID)}`)
       .then((res) => res.json())
@@ -91,6 +96,11 @@ class App extends React.Component {
       );
   }
 
+  // TODO: Split up and move the fetch function
+  // Fetch function should just fetch and return aritst and related artists
+  // Move the simplified fetch function to the helper functions file
+  // The state changing should stay here and just use the helper
+  // function to retrieve the artist and related artists for state changing
   drawArtistSearchResults(artistName) {
     fetch(`/search/${encodeURIComponent(artistName)}`)
       .then((res) => res.json())
