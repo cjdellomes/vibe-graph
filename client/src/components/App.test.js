@@ -35,7 +35,9 @@ describe('App', () => {
         tooltipDelay: 200,
       },
     };
+
     const component = shallow(<App />);
+
     expect(component.state('searchValue')).toBe('');
     expect(component.state('graph').nodes.length).toBe(0);
     expect(component.state('graph').edges.length).toBe(0);
@@ -46,6 +48,12 @@ describe('App', () => {
     expect(component.state('events')).toMatchObject({
       selectNode: component.instance().handleNodeClick,
     });
+  });
+
+  it('changes the search value when handleArtistChange is called', () => {
+    const component = shallow(<App />);
+    component.instance().handleGraphReset('abcdef');
+    expect(component.state('searchValue')).toBe('');
   });
 
   it('resets the graph when the handleGraphReset is called', () => {
@@ -76,6 +84,7 @@ describe('App', () => {
       nodeSet: new Set(['abc', 'gasdgasdgasdg']),
       edgeSet: new Set(['abc:gasdgasdgasdg']),
     };
+
     const component = shallow(<App />);
     component.instance().setState({
       searchValue: 'test',
@@ -84,6 +93,7 @@ describe('App', () => {
     });
 
     component.instance().handleGraphReset();
+
     expect(component.state('searchValue')).toBe('');
     expect(component.state('graph').nodes.length).toBe(0);
     expect(component.state('graph').edges.length).toBe(0);
