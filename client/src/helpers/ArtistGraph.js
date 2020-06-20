@@ -91,10 +91,36 @@ const addRelatedArtistsToGraph = (graph, artistNodeID, relatedArtists) => {
   }
 };
 
+const fetchRelatedArtists = (artistID) => fetch(`/related-artists/${encodeURIComponent(artistID)}`)
+  .then((res) => res.json())
+  .then(
+    (result) => result.related_artists,
+    (error) => {
+      console.error('error in related artist result: ', error);
+    },
+  )
+  .catch((error) => {
+    console.error('error in fetching related artists: ', error);
+  });
+
+const fetchArtistSearch = async (artistName) => fetch(`/search/${encodeURIComponent(artistName)}`)
+  .then((res) => res.json())
+  .then(
+    (result) => result,
+    (error) => {
+      console.error('error in artist search result: ', error);
+    },
+  )
+  .catch((error) => {
+    console.error('error in fetching artist search results: ', error);
+  });
+
 module.exports = {
   getArtistImageUrlOrDefault,
   getRelatedArtistEdge,
   getArtistNode,
   addArtistToGraph,
   addRelatedArtistsToGraph,
+  fetchRelatedArtists,
+  fetchArtistSearch,
 };

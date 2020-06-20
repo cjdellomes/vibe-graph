@@ -5,6 +5,8 @@ import ArtistForm from './ArtistForm';
 import {
   addArtistToGraph,
   addRelatedArtistsToGraph,
+  fetchRelatedArtists,
+  fetchArtistSearch,
 } from '../helpers/ArtistGraph';
 
 class App extends React.Component {
@@ -60,78 +62,50 @@ class App extends React.Component {
     };
   }
 
-  // TODO: Split up and move the fetch function
-  // Fetch function should just fetch and return the related artists
-  // Move the simplified fetch function to the helper functions file
-  // The state changing should stay here and just use the helper
-  // function to retrieve the related artists for state changing
-  drawRelatedArtists(artistID) {
-    fetch(`/related-artists/${encodeURIComponent(artistID)}`)
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          const relatedArtists = result.related_artists;
+  async drawRelatedArtists(artistID) {
+    const relatedArtists = await fetchRelatedArtists(artistID);
+    const { graph } = this.state;
+    const {
+      nodes, edges, nodeSet, edgeSet,
+    } = graph;
 
-          const { graph } = this.state;
-          const {
-            nodes, edges, nodeSet, edgeSet,
-          } = graph;
+    const graphCopy = {
+      nodes: Array.from(nodes),
+      edges: Array.from(edges),
+      nodeSet: new Set(nodeSet),
+      edgeSet: new Set(edgeSet),
+    };
 
-          const graphCopy = {
-            nodes: Array.from(nodes),
-            edges: Array.from(edges),
-            nodeSet: new Set(nodeSet),
-            edgeSet: new Set(edgeSet),
-          };
+    addRelatedArtistsToGraph(graphCopy, artistID, relatedArtists);
 
-          addRelatedArtistsToGraph(graphCopy, artistID, relatedArtists);
-
-          this.setState({
-            graph: graphCopy,
-          });
-        },
-        (error) => {
-          console.log(error);
-        },
-      );
+    this.setState({
+      graph: graphCopy,
+    });
   }
 
-  // TODO: Split up and move the fetch function
-  // Fetch function should just fetch and return aritst and related artists
-  // Move the simplified fetch function to the helper functions file
-  // The state changing should stay here and just use the helper
-  // function to retrieve the artist and related artists for state changing
-  drawArtistSearchResults(artistName) {
-    fetch(`/search/${encodeURIComponent(artistName)}`)
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          const { artist } = result;
-          const relatedArtists = result.related_artists;
+  async drawArtistSearchResults(artistName) {
+    const searchResult = await fetchArtistSearch(artistName);
+    const { artist } = searchResult;
+    const relatedArtists = searchResult.related_artists;
 
-          const { graph } = this.state;
-          const {
-            nodes, edges, nodeSet, edgeSet,
-          } = graph;
+    const { graph } = this.state;
+    const {
+      nodes, edges, nodeSet, edgeSet,
+    } = graph;
 
-          const graphCopy = {
-            nodes: Array.from(nodes),
-            edges: Array.from(edges),
-            nodeSet: new Set(nodeSet),
-            edgeSet: new Set(edgeSet),
-          };
+    const graphCopy = {
+      nodes: Array.from(nodes),
+      edges: Array.from(edges),
+      nodeSet: new Set(nodeSet),
+      edgeSet: new Set(edgeSet),
+    };
 
-          addArtistToGraph(graphCopy, artist);
-          addRelatedArtistsToGraph(graphCopy, artist.id, relatedArtists);
+    addArtistToGraph(graphCopy, artist);
+    addRelatedArtistsToGraph(graphCopy, artist.id, relatedArtists);
 
-          this.setState({
-            graph: graphCopy,
-          });
-        },
-        (error) => {
-          console.log(error);
-        },
-      );
+    this.setState({
+      graph: graphCopy,
+    });
   }
 
   handleNodeClick(event) {
