@@ -16,8 +16,6 @@ class App extends React.Component {
     this.handleArtistSubmit = this.handleArtistSubmit.bind(this);
     this.handleGraphReset = this.handleGraphReset.bind(this);
     this.handleNodeClick = this.handleNodeClick.bind(this);
-    this.drawArtistSearchResults = this.drawArtistSearchResults.bind(this);
-    this.drawRelatedArtists = this.drawRelatedArtists.bind(this);
 
     this.state = {
       searchValue: '',
@@ -62,8 +60,17 @@ class App extends React.Component {
     };
   }
 
-  async drawRelatedArtists(artistID) {
-    const relatedArtists = await fetchRelatedArtists(artistID);
+  async handleNodeClick(event) {
+    const artistNodeID = event.nodes[0];
+    const { loadedArtists } = this.state;
+
+    if (loadedArtists.has(artistNodeID)) {
+      return;
+    }
+
+    loadedArtists.add(artistNodeID);
+
+    const relatedArtists = await fetchRelatedArtists(artistNodeID);
     const { graph } = this.state;
     const {
       nodes, edges, nodeSet, edgeSet,
@@ -76,15 +83,28 @@ class App extends React.Component {
       edgeSet: new Set(edgeSet),
     };
 
-    addRelatedArtistsToGraph(graphCopy, artistID, relatedArtists);
+    addRelatedArtistsToGraph(graphCopy, artistNodeID, relatedArtists);
 
     this.setState({
       graph: graphCopy,
     });
   }
 
-  async drawArtistSearchResults(artistName) {
-    const searchResult = await fetchArtistSearch(artistName);
+  handleGraphReset() {
+    this.setState({
+      searchValue: '',
+      graph: {
+        nodes: [],
+        edges: [],
+        nodeSet: new Set(),
+        edgeSet: new Set(),
+      },
+      loadedArtists: new Set(),
+    });
+  }
+
+  async handleArtistSubmit(searchValue) {
+    const searchResult = await fetchArtistSearch(searchValue);
     const { artist } = searchResult;
     const relatedArtists = searchResult.related_artists;
 
@@ -106,32 +126,6 @@ class App extends React.Component {
     this.setState({
       graph: graphCopy,
     });
-  }
-
-  handleNodeClick(event) {
-    const artistNodeID = event.nodes[0];
-    const { loadedArtists } = this.state;
-    if (!loadedArtists.has(artistNodeID)) {
-      this.drawRelatedArtists(artistNodeID);
-      loadedArtists.add(artistNodeID);
-    }
-  }
-
-  handleGraphReset() {
-    this.setState({
-      searchValue: '',
-      graph: {
-        nodes: [],
-        edges: [],
-        nodeSet: new Set(),
-        edgeSet: new Set(),
-      },
-      loadedArtists: new Set(),
-    });
-  }
-
-  handleArtistSubmit(searchValue) {
-    this.drawArtistSearchResults(searchValue);
   }
 
   handleArtistChange(searchValue) {
