@@ -52,8 +52,9 @@ describe('App', () => {
 
   it('changes the search value when handleArtistChange is called', () => {
     const component = shallow(<App />);
-    component.instance().handleGraphReset('abcdef');
     expect(component.state('searchValue')).toBe('');
+    component.instance().handleArtistChange('abcdef');
+    expect(component.state('searchValue')).toBe('abcdef');
   });
 
   it('resets the graph when the handleGraphReset is called', () => {
