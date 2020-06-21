@@ -2,12 +2,7 @@ import React from 'react';
 import './App.css';
 import Graph from 'react-graph-vis';
 import ArtistForm from './ArtistForm';
-import {
-  addArtistToGraph,
-  addRelatedArtistsToGraph,
-  fetchRelatedArtists,
-  fetchArtistSearch,
-} from '../helpers/ArtistGraph';
+import ArtistGraphHelper from '../helpers/ArtistGraph';
 
 class App extends React.Component {
   constructor(props) {
@@ -70,7 +65,7 @@ class App extends React.Component {
 
     loadedArtists.add(artistNodeID);
 
-    const relatedArtists = await fetchRelatedArtists(artistNodeID);
+    const relatedArtists = await ArtistGraphHelper.fetchRelatedArtists(artistNodeID);
     const { graph } = this.state;
     const {
       nodes, edges, nodeSet, edgeSet,
@@ -83,7 +78,7 @@ class App extends React.Component {
       edgeSet: new Set(edgeSet),
     };
 
-    addRelatedArtistsToGraph(graphCopy, artistNodeID, relatedArtists);
+    ArtistGraphHelper.addRelatedArtistsToGraph(graphCopy, artistNodeID, relatedArtists);
 
     this.setState({
       graph: graphCopy,
@@ -104,7 +99,7 @@ class App extends React.Component {
   }
 
   async handleArtistSubmit(searchValue) {
-    const searchResult = await fetchArtistSearch(searchValue);
+    const searchResult = await ArtistGraphHelper.fetchArtistSearch(searchValue);
     const { artist } = searchResult;
     const relatedArtists = searchResult.related_artists;
 
@@ -120,8 +115,8 @@ class App extends React.Component {
       edgeSet: new Set(edgeSet),
     };
 
-    addArtistToGraph(graphCopy, artist);
-    addRelatedArtistsToGraph(graphCopy, artist.id, relatedArtists);
+    ArtistGraphHelper.addArtistToGraph(graphCopy, artist);
+    ArtistGraphHelper.addRelatedArtistsToGraph(graphCopy, artist.id, relatedArtists);
 
     this.setState({
       graph: graphCopy,
