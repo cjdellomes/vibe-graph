@@ -1,10 +1,12 @@
-import {
+import ArtistGraphHelper from './ArtistGraph';
+
+const {
   getArtistImageUrlOrDefault,
   getRelatedArtistEdge,
   getArtistNode,
   addArtistToGraph,
   addRelatedArtistsToGraph,
-} from './ArtistGraph';
+} = ArtistGraphHelper;
 
 describe('getArtistImageUrlOrDefault', () => {
   it('gets the last image in a given artist object', () => {

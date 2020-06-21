@@ -30,7 +30,7 @@ class ArtistGraphHelper {
       return null;
     }
 
-    const artistImageUrl = this.getArtistImageUrlOrDefault(artist, '');
+    const artistImageUrl = ArtistGraphHelper.getArtistImageUrlOrDefault(artist, '');
 
     const artistNode = {
       id: artist.id,
@@ -50,7 +50,7 @@ class ArtistGraphHelper {
 
     const { nodes, nodeSet } = graph;
 
-    const artistNode = this.getArtistNode(artist);
+    const artistNode = ArtistGraphHelper.getArtistNode(artist);
 
     if (!nodeSet.has(artistNode.id)) {
       nodeSet.add(artistNode.id);
@@ -75,8 +75,8 @@ class ArtistGraphHelper {
     for (let i = 0; i < relatedArtists.length; i += 1) {
       const relatedArtist = relatedArtists[i];
 
-      const relatedArtistNode = this.getArtistNode(relatedArtist);
-      const relatedArtistEdge = this.getRelatedArtistEdge(
+      const relatedArtistNode = ArtistGraphHelper.getArtistNode(relatedArtist);
+      const relatedArtistEdge = ArtistGraphHelper.getRelatedArtistEdge(
         artistNodeID,
         relatedArtistNode.id,
       );
