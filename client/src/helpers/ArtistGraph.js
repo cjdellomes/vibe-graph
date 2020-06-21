@@ -99,10 +99,12 @@ class ArtistGraphHelper {
         (result) => result.related_artists,
         (error) => {
           console.error('error in related artist result: ', error);
+          return null;
         },
       )
       .catch((error) => {
         console.error('error in fetching related artists: ', error);
+        return null;
       });
   }
 
@@ -113,10 +115,12 @@ class ArtistGraphHelper {
         (result) => result,
         (error) => {
           console.error('error in artist search result: ', error);
+          return null;
         },
       )
       .catch((error) => {
         console.error('error in fetching artist search results: ', error);
+        return null;
       });
   }
 }
