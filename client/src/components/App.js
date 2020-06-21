@@ -8,8 +8,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.handleArtistChange = this.handleArtistChange.bind(this);
-    this.handleArtistSubmit = this.handleArtistSubmit.bind(this);
     this.handleGraphReset = this.handleGraphReset.bind(this);
+    this.handleArtistSubmit = this.handleArtistSubmit.bind(this);
     this.handleNodeClick = this.handleNodeClick.bind(this);
 
     this.state = {
@@ -55,34 +55,8 @@ class App extends React.Component {
     };
   }
 
-  async handleNodeClick(event) {
-    const artistNodeID = event.nodes[0];
-    const { loadedArtists } = this.state;
-
-    if (loadedArtists.has(artistNodeID)) {
-      return;
-    }
-
-    loadedArtists.add(artistNodeID);
-
-    const relatedArtists = await ArtistGraphHelper.fetchRelatedArtists(artistNodeID);
-    const { graph } = this.state;
-    const {
-      nodes, edges, nodeSet, edgeSet,
-    } = graph;
-
-    const graphCopy = {
-      nodes: Array.from(nodes),
-      edges: Array.from(edges),
-      nodeSet: new Set(nodeSet),
-      edgeSet: new Set(edgeSet),
-    };
-
-    ArtistGraphHelper.addRelatedArtistsToGraph(graphCopy, artistNodeID, relatedArtists);
-
-    this.setState({
-      graph: graphCopy,
-    });
+  handleArtistChange(searchValue) {
+    this.setState({ searchValue });
   }
 
   handleGraphReset() {
@@ -95,6 +69,42 @@ class App extends React.Component {
         edgeSet: new Set(),
       },
       loadedArtists: new Set(),
+    });
+  }
+
+  async handleNodeClick(event) {
+    const artistNodeID = event.nodes[0];
+    const { loadedArtists } = this.state;
+
+    if (loadedArtists.has(artistNodeID)) {
+      return;
+    }
+
+    loadedArtists.add(artistNodeID);
+
+    const relatedArtists = await ArtistGraphHelper.fetchRelatedArtists(
+      artistNodeID,
+    );
+    const { graph } = this.state;
+    const {
+      nodes, edges, nodeSet, edgeSet,
+    } = graph;
+
+    const graphCopy = {
+      nodes: Array.from(nodes),
+      edges: Array.from(edges),
+      nodeSet: new Set(nodeSet),
+      edgeSet: new Set(edgeSet),
+    };
+
+    ArtistGraphHelper.addRelatedArtistsToGraph(
+      graphCopy,
+      artistNodeID,
+      relatedArtists,
+    );
+
+    this.setState({
+      graph: graphCopy,
     });
   }
 
@@ -116,15 +126,15 @@ class App extends React.Component {
     };
 
     ArtistGraphHelper.addArtistToGraph(graphCopy, artist);
-    ArtistGraphHelper.addRelatedArtistsToGraph(graphCopy, artist.id, relatedArtists);
+    ArtistGraphHelper.addRelatedArtistsToGraph(
+      graphCopy,
+      artist.id,
+      relatedArtists,
+    );
 
     this.setState({
       graph: graphCopy,
     });
-  }
-
-  handleArtistChange(searchValue) {
-    this.setState({ searchValue });
   }
 
   render() {

@@ -30,7 +30,10 @@ class ArtistGraphHelper {
       return null;
     }
 
-    const artistImageUrl = ArtistGraphHelper.getArtistImageUrlOrDefault(artist, '');
+    const artistImageUrl = ArtistGraphHelper.getArtistImageUrlOrDefault(
+      artist,
+      '',
+    );
 
     const artistNode = {
       id: artist.id,

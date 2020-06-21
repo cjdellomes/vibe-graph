@@ -1,11 +1,17 @@
 import React from 'react';
 import { shallow, configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
+import ArtistGraphHelper from '../helpers/ArtistGraph';
 import App from './App';
 
+jest.mock('../helpers/ArtistGraph');
 configure({ adapter: new Adapter() });
 
 describe('App', () => {
+  beforeEach(() => {
+    ArtistGraphHelper.mockClear();
+  });
+
   it('initializes with the correct initial state', () => {
     const mockOptions = {
       autoResize: true,
@@ -93,6 +99,9 @@ describe('App', () => {
       loadedArtists: new Set(['abc']),
     });
 
+    expect(component.state('searchValue')).toBe('test');
+    expect(component.state('loadedArtists').size).toBe(1);
+
     component.instance().handleGraphReset();
 
     expect(component.state('searchValue')).toBe('');
@@ -150,6 +159,104 @@ describe('App', () => {
     expect(component.state('graph').edges.length).toBe(1);
     expect(component.state('graph').nodeSet.size).toBe(2);
     expect(component.state('graph').edgeSet.size).toBe(1);
+    expect(component.state('loadedArtists').size).toBe(2);
+  });
+
+  it('should fetch the related artists and update the graph when handleArtistNode is called', async () => {
+    const mockFetchRelatedArtists = jest.fn();
+    mockFetchRelatedArtists.mockReturnValue([
+      {
+        id: 'aaa',
+        name: 'bbb',
+        images: [
+          {
+            height: 320,
+            url: 'qqq',
+            width: 320,
+          },
+        ],
+      },
+    ]);
+
+    const mockAddRelatedArtistsToGraph = jest.fn();
+    mockAddRelatedArtistsToGraph.mockImplementation(
+      (graph, artistNodeID, relatedArtists) => {
+        const relatedArtist = relatedArtists[0];
+        const relatedArtistNode = {
+          id: relatedArtist.id,
+          label: relatedArtist.name,
+          title: relatedArtist.name,
+          shape: 'circularImage',
+          image: relatedArtist.images[0].url,
+        };
+        const relatedArtistEdge = {
+          id: `${artistNodeID}:aaa`,
+          from: `${artistNodeID}`,
+          to: 'aaa',
+        };
+
+        graph.nodes.push(relatedArtistNode);
+        graph.edges.push(relatedArtistEdge);
+        graph.nodeSet.add(relatedArtistNode.id);
+        graph.edgeSet.add(relatedArtistEdge.id);
+      },
+    );
+
+    ArtistGraphHelper.fetchRelatedArtists = mockFetchRelatedArtists;
+    ArtistGraphHelper.addRelatedArtistsToGraph = mockAddRelatedArtistsToGraph;
+
+    const mockGraph = {
+      nodes: [
+        {
+          id: 'abc',
+          label: 'def',
+          title: 'def',
+          shape: 'circularImage',
+          image: 'xyz',
+        },
+        {
+          id: 'gasdgasdgasdg',
+          label: 'asdhgashah',
+          title: 'asdhgashah',
+          shape: 'circularImage',
+          image: 'hadfhadfhdsh',
+        },
+      ],
+      edges: [
+        {
+          id: 'abc:gasdgasdgasdg',
+          from: 'abc',
+          to: 'gasdgasdgasdg',
+        },
+      ],
+      nodeSet: new Set(['abc', 'gasdgasdgasdg']),
+      edgeSet: new Set(['abc:gasdgasdgasdg']),
+    };
+    const mockLoadedArtists = new Set(['abc']);
+    const mockEvent = {
+      nodes: ['gasdgasdgasdg'],
+    };
+
+    const component = shallow(<App />);
+
+    expect(component.state('searchValue')).toBe('');
+
+    component.instance().setState({
+      searchValue: 'test',
+      graph: mockGraph,
+      loadedArtists: mockLoadedArtists,
+    });
+
+    expect(component.state('searchValue')).toBe('test');
+    expect(component.state('loadedArtists').size).toBe(1);
+
+    await component.instance().handleNodeClick(mockEvent);
+
+    expect(component.state('searchValue')).toBe('test');
+    expect(component.state('graph').nodes.length).toBe(3);
+    expect(component.state('graph').edges.length).toBe(2);
+    expect(component.state('graph').nodeSet.size).toBe(3);
+    expect(component.state('graph').edgeSet.size).toBe(2);
     expect(component.state('loadedArtists').size).toBe(2);
   });
 });
