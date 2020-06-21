@@ -20,6 +20,7 @@ class App extends React.Component {
         nodeSet: new Set(),
         edgeSet: new Set(),
       },
+      searchedArtists: new Set(),
       loadedArtists: new Set(),
       graphOptions: {
         autoResize: true,
@@ -68,6 +69,7 @@ class App extends React.Component {
         nodeSet: new Set(),
         edgeSet: new Set(),
       },
+      searchedArtists: new Set(),
       loadedArtists: new Set(),
     });
   }
@@ -109,6 +111,14 @@ class App extends React.Component {
   }
 
   async handleArtistSubmit(searchValue) {
+    const { searchedArtists } = this.state;
+
+    if (searchedArtists.has(searchValue)) {
+      return;
+    }
+
+    searchedArtists.add(searchValue);
+
     const searchResult = await ArtistGraphHelper.fetchArtistSearch(searchValue);
     const { artist } = searchResult;
     const relatedArtists = searchResult.related_artists;

@@ -147,14 +147,12 @@ describe('App', () => {
 
     const component = shallow(<App />);
     component.instance().setState({
-      searchValue: 'test',
       graph: mockGraph,
       loadedArtists: mockLoadedArtists,
     });
 
     component.instance().handleNodeClick(mockEvent);
 
-    expect(component.state('searchValue')).toBe('test');
     expect(component.state('graph').nodes.length).toBe(2);
     expect(component.state('graph').edges.length).toBe(1);
     expect(component.state('graph').nodeSet.size).toBe(2);
@@ -242,21 +240,67 @@ describe('App', () => {
     expect(component.state('searchValue')).toBe('');
 
     component.instance().setState({
-      searchValue: 'test',
       graph: mockGraph,
       loadedArtists: mockLoadedArtists,
     });
 
-    expect(component.state('searchValue')).toBe('test');
     expect(component.state('loadedArtists').size).toBe(1);
 
     await component.instance().handleNodeClick(mockEvent);
 
-    expect(component.state('searchValue')).toBe('test');
     expect(component.state('graph').nodes.length).toBe(3);
     expect(component.state('graph').edges.length).toBe(2);
     expect(component.state('graph').nodeSet.size).toBe(3);
     expect(component.state('graph').edgeSet.size).toBe(2);
+    expect(component.state('loadedArtists').size).toBe(2);
+  });
+
+  it('should not do anything if the searched artist has already has already been loaded', async () => {
+    const mockGraph = {
+      nodes: [
+        {
+          id: 'abc',
+          label: 'def',
+          title: 'def',
+          shape: 'circularImage',
+          image: 'xyz',
+        },
+        {
+          id: 'gasdgasdgasdg',
+          label: 'asdhgashah',
+          title: 'asdhgashah',
+          shape: 'circularImage',
+          image: 'hadfhadfhdsh',
+        },
+      ],
+      edges: [
+        {
+          id: 'abc:gasdgasdgasdg',
+          from: 'abc',
+          to: 'gasdgasdgasdg',
+        },
+      ],
+      nodeSet: new Set(['abc', 'gasdgasdgasdg']),
+      edgeSet: new Set(['abc:gasdgasdgasdg']),
+    };
+    const mockLoadedArtists = new Set(['abc', 'gasdgasdgasdg']);
+    const mockSearchedArtists = new Set(['abc']);
+
+    const component = shallow(<App />);
+    component.instance().setState({
+      searchValue: 'abc',
+      graph: mockGraph,
+      searchedArtists: mockSearchedArtists,
+      loadedArtists: mockLoadedArtists,
+    });
+
+    await component.instance().handleArtistSubmit('abc');
+
+    expect(component.state('searchValue')).toBe('abc');
+    expect(component.state('graph').nodes.length).toBe(2);
+    expect(component.state('graph').edges.length).toBe(1);
+    expect(component.state('graph').nodeSet.size).toBe(2);
+    expect(component.state('graph').edgeSet.size).toBe(1);
     expect(component.state('loadedArtists').size).toBe(2);
   });
 });
