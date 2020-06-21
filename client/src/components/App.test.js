@@ -102,4 +102,54 @@ describe('App', () => {
     expect(component.state('graph').edgeSet.size).toBe(0);
     expect(component.state('loadedArtists').size).toBe(0);
   });
+
+  it('should not do anything if the clicked artist node has already had related artists loaded', () => {
+    const mockGraph = {
+      nodes: [
+        {
+          id: 'abc',
+          label: 'def',
+          title: 'def',
+          shape: 'circularImage',
+          image: 'xyz',
+        },
+        {
+          id: 'gasdgasdgasdg',
+          label: 'asdhgashah',
+          title: 'asdhgashah',
+          shape: 'circularImage',
+          image: 'hadfhadfhdsh',
+        },
+      ],
+      edges: [
+        {
+          id: 'abc:gasdgasdgasdg',
+          from: 'abc',
+          to: 'gasdgasdgasdg',
+        },
+      ],
+      nodeSet: new Set(['abc', 'gasdgasdgasdg']),
+      edgeSet: new Set(['abc:gasdgasdgasdg']),
+    };
+    const mockLoadedArtists = new Set(['abc', 'gasdgasdgasdg']);
+    const mockEvent = {
+      nodes: ['abc'],
+    };
+
+    const component = shallow(<App />);
+    component.instance().setState({
+      searchValue: 'test',
+      graph: mockGraph,
+      loadedArtists: mockLoadedArtists,
+    });
+
+    component.instance().handleNodeClick(mockEvent);
+
+    expect(component.state('searchValue')).toBe('test');
+    expect(component.state('graph').nodes.length).toBe(2);
+    expect(component.state('graph').edges.length).toBe(1);
+    expect(component.state('graph').nodeSet.size).toBe(2);
+    expect(component.state('graph').edgeSet.size).toBe(1);
+    expect(component.state('loadedArtists').size).toBe(2);
+  });
 });
