@@ -111,7 +111,7 @@ class App extends React.Component {
   }
 
   async handleArtistSubmit(searchValue) {
-    const { searchedArtists } = this.state;
+    const { loadedArtists, searchedArtists } = this.state;
 
     if (searchedArtists.has(searchValue)) {
       return;
@@ -122,6 +122,12 @@ class App extends React.Component {
     const searchResult = await ArtistGraphHelper.fetchArtistSearch(searchValue);
     const { artist } = searchResult;
     const relatedArtists = searchResult.related_artists;
+
+    if (loadedArtists.has(artist.id)) {
+      return;
+    }
+
+    loadedArtists.add(artist.id);
 
     const { graph } = this.state;
     const {
