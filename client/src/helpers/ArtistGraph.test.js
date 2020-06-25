@@ -1,4 +1,7 @@
+import { enableFetchMocks } from 'jest-fetch-mock';
 import ArtistGraphHelper from './ArtistGraph';
+
+enableFetchMocks();
 
 const {
   getArtistImageUrlOrDefault,
@@ -6,6 +9,8 @@ const {
   getArtistNode,
   addArtistToGraph,
   addRelatedArtistsToGraph,
+  fetchRelatedArtists,
+  fetchArtistSearch,
 } = ArtistGraphHelper;
 
 describe('ArtistGraphHelper', () => {
@@ -357,6 +362,106 @@ describe('ArtistGraphHelper', () => {
       expect(mockGraph.edgeSet.size).toBe(1);
       expect(mockGraph.edges[0].id).toBe('abc:gasdgasdgasdg');
       expect(mockGraph.edgeSet.has('abc:gasdgasdgasdg'));
+    });
+  });
+
+  describe('fetchRelatedArtists', () => {
+    beforeEach(() => {
+      fetch.resetMocks();
+    });
+
+    it('should fetch a null object given an erroneous artist search fetch response', async () => {
+      fetch.mockResponseOnce(null);
+
+      expect(await fetchArtistSearch('aaa')).toEqual(null);
+    });
+
+    it('should fetch the artist search result', async () => {
+      const mockArtist = {
+        id: 'aaa',
+        name: 'bbb',
+        images: [
+          {
+            height: 320,
+            url: 'ccc',
+            width: 320,
+          },
+        ],
+      };
+      const mockRelatedArtists = [
+        {
+          id: 'ddd',
+          name: 'eee',
+          images: [
+            {
+              height: 320,
+              url: 'fff',
+              width: 320,
+            },
+          ],
+        },
+        {
+          id: 'ggg',
+          name: 'hhh',
+          images: [
+            {
+              height: 320,
+              url: 'iii',
+              width: 320,
+            },
+          ],
+        },
+      ];
+      const mockFetchResponse = {
+        artist: mockArtist,
+        related_artists: mockRelatedArtists,
+      };
+
+      fetch.mockResponseOnce(JSON.stringify({
+        artist: mockArtist,
+        related_artists: mockRelatedArtists,
+      }));
+
+      expect(await fetchArtistSearch('aaa')).toMatchObject(mockFetchResponse);
+    });
+
+    it('should fetch a null object given an erroneous related artists fetch response', async () => {
+      fetch.mockResponseOnce(null);
+
+      expect(await fetchRelatedArtists('aaa')).toEqual(null);
+    });
+
+    it('should fetch the related artists', async () => {
+      const mockRelatedArtists = [
+        {
+          id: 'ddd',
+          name: 'eee',
+          images: [
+            {
+              height: 320,
+              url: 'fff',
+              width: 320,
+            },
+          ],
+        },
+        {
+          id: 'ggg',
+          name: 'hhh',
+          images: [
+            {
+              height: 320,
+              url: 'iii',
+              width: 320,
+            },
+          ],
+        },
+      ];
+
+      fetch.mockResponseOnce(JSON.stringify({
+        related_artists: mockRelatedArtists,
+      }));
+
+      expect(await fetchRelatedArtists('aaa')).toEqual(expect.arrayContaining(mockRelatedArtists));
     });
   });
 });

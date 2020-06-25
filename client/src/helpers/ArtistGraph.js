@@ -100,10 +100,6 @@ class ArtistGraphHelper {
       .then((res) => res.json())
       .then(
         (result) => result.related_artists,
-        (error) => {
-          console.error('error in related artist result: ', error);
-          return null;
-        },
       )
       .catch((error) => {
         console.error('error in fetching related artists: ', error);
@@ -116,10 +112,6 @@ class ArtistGraphHelper {
       .then((res) => res.json())
       .then(
         (result) => result,
-        (error) => {
-          console.error('error in artist search result: ', error);
-          return null;
-        },
       )
       .catch((error) => {
         console.error('error in fetching artist search results: ', error);
