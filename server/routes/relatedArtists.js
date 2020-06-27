@@ -1,5 +1,6 @@
 const express = require('express');
 const spotify = require('../spotifyController');
+const redisClient = require('../redis-client');
 
 const router = express.Router();
 
@@ -13,6 +14,15 @@ router.param('artistID', async (req, res, next, artistID) => {
   }
 
   req.relatedArtists = relatedArtists;
+
+  redisClient.setex(
+    artistID,
+    3600,
+    JSON.stringify({
+      related_artists: req.relatedArtists,
+    }),
+  );
+
   return next();
 });
 
