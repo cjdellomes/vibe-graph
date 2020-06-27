@@ -5,15 +5,11 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
 const enforce = require('express-sslify');
-const redis = require('redis');
 
 const searchRouter = require('./routes/search');
 const relatedArtistsRouter = require('./routes/relatedArtists');
 
 const app = express();
-const redisClient = redis.createClient(
-  process.env.REDIS_URL || 'localhost:6379',
-);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(enforce.HTTPS({ trustProtoHeader: true }));
@@ -27,11 +23,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(`${__dirname}/../client`, 'build')));
 
 app.use(cors());
-
-app.use((req, res, next) => {
-  req.redis = redisClient;
-  next();
-});
 
 app.use('/search', searchRouter);
 app.use('/related-artists', relatedArtistsRouter);
