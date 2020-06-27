@@ -19,7 +19,8 @@
     "http-errors": "~1.6.3",
     "mocha": "^7.1.2",
     "morgan": "~1.9.1",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "redis": "^3.0.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.4",
