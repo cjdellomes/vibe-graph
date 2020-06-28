@@ -7,8 +7,6 @@ jobs:
   build-and-test:
     docker:
       - image: circleci/node:12.16.3
-        - environment:
-          REDIS_URL: redis://localhost:6379
       - image: circleci/redis:6.0.5
     steps:
       - checkout
