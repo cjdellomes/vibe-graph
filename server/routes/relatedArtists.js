@@ -4,54 +4,44 @@ const redisClient = require('../redis-client');
 
 const router = express.Router();
 
-router.use((req, res, next) => {
-  console.log('here');
+const checkCache = (req, res, next) => {
   const { artistID } = req.params;
 
   redisClient.get(artistID, (err, data) => {
     if (err) {
-      console.error(err);
+      console.log(err);
+      res.status(500).send(err);
     }
-
     if (data != null) {
       res.send(data);
     } else {
       next();
     }
   });
-});
+};
 
-router.param('artistID', async (req, res, next, artistID) => {
+router.get('/:artistID', checkCache, async (req, res) => {
+  const { artistID } = req.params;
+
   const token = await spotify.getToken();
   const relatedArtists = await spotify.getRelatedArtists(artistID, token);
 
   if (relatedArtists == null) {
-    req.relatedArtists = null;
-    return next();
-  }
-
-  req.relatedArtists = relatedArtists;
-
-  redisClient.setex(
-    artistID,
-    3600,
-    JSON.stringify({
-      related_artists: req.relatedArtists,
-    }),
-  );
-
-  return next();
-});
-
-router.get('/:artistID', (req, res) => {
-  if (req.relatedArtists == null) {
     res.status(400);
     res.send('Invalid ID');
     return;
   }
 
+  redisClient.setex(
+    artistID,
+    3600,
+    JSON.stringify({
+      related_artists: relatedArtists,
+    }),
+  );
+
   res.send({
-    related_artists: req.relatedArtists,
+    related_artists: relatedArtists,
   });
 });
 
