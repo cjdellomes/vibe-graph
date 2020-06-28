@@ -10,7 +10,6 @@ const checkCache = (req, res, next) => {
   redisClient.get(artistID, (err, data) => {
     if (err) {
       console.log(err);
-      res.status(500).send(err);
     }
     if (data != null) {
       res.send(JSON.parse(data));
