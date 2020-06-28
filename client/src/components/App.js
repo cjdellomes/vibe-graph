@@ -120,6 +120,10 @@ class App extends React.Component {
     searchedArtists.add(searchValue);
 
     const searchResult = await ArtistGraphHelper.fetchArtistSearch(searchValue);
+    if (searchResult == null) {
+      return;
+    }
+
     const { artist } = searchResult;
     const relatedArtists = searchResult.related_artists;
 
