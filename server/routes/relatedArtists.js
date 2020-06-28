@@ -13,7 +13,7 @@ const checkCache = (req, res, next) => {
       res.status(500).send(err);
     }
     if (data != null) {
-      res.send(data);
+      res.send(JSON.parse(data));
     } else {
       next();
     }
