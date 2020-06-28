@@ -6,6 +6,7 @@ const logger = require('morgan');
 const cors = require('cors');
 const enforce = require('express-sslify');
 
+const redisClient = require('./redis-client');
 const searchRouter = require('./routes/search');
 const relatedArtistsRouter = require('./routes/relatedArtists');
 
@@ -14,6 +15,8 @@ const app = express();
 if (process.env.NODE_ENV === 'production') {
   app.use(enforce.HTTPS({ trustProtoHeader: true }));
 }
+
+app.set('cache', redisClient);
 
 app.use(logger('dev'));
 app.use(express.json());

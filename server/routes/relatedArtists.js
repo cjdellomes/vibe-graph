@@ -1,13 +1,13 @@
 const express = require('express');
 const spotify = require('../spotifyController');
-const redisClient = require('../redis-client');
 
 const router = express.Router();
 
 const checkCache = (req, res, next) => {
+  const cache = req.app.get('cache');
   const { artistID } = req.params;
 
-  redisClient.get(artistID, (err, data) => {
+  cache.get(artistID, (err, data) => {
     if (err) {
       console.log(err);
     }
@@ -20,6 +20,7 @@ const checkCache = (req, res, next) => {
 };
 
 router.get('/:artistID', checkCache, async (req, res) => {
+  const cache = req.app.get('cache');
   const { artistID } = req.params;
 
   const token = await spotify.getToken();
@@ -31,7 +32,7 @@ router.get('/:artistID', checkCache, async (req, res) => {
     return;
   }
 
-  redisClient.setex(
+  cache.setex(
     artistID,
     3600,
     JSON.stringify({
