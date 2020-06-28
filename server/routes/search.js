@@ -43,11 +43,6 @@ router.get('/:searchValue', checkCache, async (req, res) => {
     }),
   );
 
-  console.log({
-    artist,
-    related_artists: relatedArtists,
-  });
-
   res.send({
     artist,
     related_artists: relatedArtists,
