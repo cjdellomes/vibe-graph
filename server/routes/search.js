@@ -4,6 +4,23 @@ const redisClient = require('../redis-client');
 
 const router = express.Router();
 
+router.use((req, res, next) => {
+  console.log('here');
+  const { artistName } = req.params;
+
+  redisClient.get(artistName, (err, data) => {
+    if (err) {
+      console.error(err);
+    }
+
+    if (data != null) {
+      res.send(data);
+    } else {
+      next();
+    }
+  });
+});
+
 router.param('artist', async (req, res, next, artistName) => {
   const token = await spotify.getToken();
   const artist = await spotify.getFirstArtist(artistName, token);
