@@ -4,6 +4,11 @@ const spotify = require('../spotifyController');
 const router = express.Router();
 
 const checkCache = (req, res, next) => {
+  if (!req.app.get('cacheConnected')) {
+    next();
+    return;
+  }
+
   const cache = req.app.get('cache');
   const { artistID } = req.params;
 
@@ -20,7 +25,6 @@ const checkCache = (req, res, next) => {
 };
 
 router.get('/:artistID', checkCache, async (req, res) => {
-  const cache = req.app.get('cache');
   const { artistID } = req.params;
 
   const token = await spotify.getToken();
@@ -32,15 +36,20 @@ router.get('/:artistID', checkCache, async (req, res) => {
     return;
   }
 
-  cache.setex(
-    artistID,
-    3600,
-    JSON.stringify({
-      related_artists: relatedArtists,
-    }),
-  );
+  if (req.app.get('cacheConnected')) {
+    const cache = req.app.get('cache');
+    cache.setex(
+      artistID,
+      3600,
+      JSON.stringify({
+        source: 'cache',
+        related_artists: relatedArtists,
+      }),
+    );
+  }
 
   res.send({
+    source: 'api',
     related_artists: relatedArtists,
   });
 });

@@ -5,8 +5,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
 const enforce = require('express-sslify');
+const redis = require('redis');
 
-const redisClient = require('./redis-client');
 const searchRouter = require('./routes/search');
 const relatedArtistsRouter = require('./routes/relatedArtists');
 
@@ -16,7 +16,28 @@ if (process.env.NODE_ENV === 'production') {
   app.use(enforce.HTTPS({ trustProtoHeader: true }));
 }
 
+const redisClient = redis.createClient(
+  process.env.REDIS_URL || 'redis://localhost:6379',
+);
+
 app.set('cache', redisClient);
+
+redisClient.on('connect', () => {
+  console.log('cache connect');
+  app.set('cacheConnected', true);
+});
+redisClient.on('reconnecting', () => {
+  console.log('cache reconnecting');
+  app.set('cacheConnected', false);
+});
+redisClient.on('end', () => {
+  console.log('cache closed');
+  app.set('cacheConnected', false);
+});
+redisClient.on('error', (err) => {
+  console.error('cache error: ', err);
+  app.set('cacheConnected', false);
+});
 
 app.use(logger('dev'));
 app.use(express.json());
