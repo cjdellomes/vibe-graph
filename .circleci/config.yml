@@ -4,7 +4,19 @@ orbs:
   heroku: circleci/heroku@1.0.1
   codecov: codecov/codecov@1.1.0
 jobs:
-  build-and-test:
+  build-and-test-no-cache:
+    docker:
+      - image: circleci/node:12.16.3
+    steps:
+      - checkout
+      - node/with-cache:
+          steps:
+            - run: npm install
+            - run: npm run build
+            - run: npm run test
+            - run: npm run coverage
+            - codecov/upload
+  build-and-test-with-cache:
     docker:
       - image: circleci/node:12.16.3
       - image: circleci/redis:6.0.5
@@ -20,10 +32,12 @@ jobs:
 workflows:
   build-test-deploy:
     jobs:
-      - build-and-test
+      - build-and-test-no-cache
+      - build-and-test-with-cache
       - heroku/deploy-via-git:
           requires:
-            - build-and-test
+            - build-and-test-no-cache
+            - build-and-test-with-cache
           filters:
             branches:
               only: master
