@@ -72,6 +72,19 @@ describe('RedisConnection', () => {
 
     chai.assert.equal(val, null);
   });
+  it('should set the key value pair with an expiration', () => {
+    const url = 'http://localhost:6379';
+    const mockConnection = new RedisConnection(redisMock, url);
+    const mockObject = {
+      abc: 'blah',
+    };
+
+    mockConnection.client.flushdb();
+    mockConnection.setex('test', 3600, mockObject);
+    mockConnection.client.get('test', (err, data) => {
+      chai.assert.deepEqual(JSON.stringify(mockObject), data);
+    });
+  });
 });
 
 describe('SpotifyController', () => {

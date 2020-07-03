@@ -59,7 +59,7 @@ class RedisConnection {
     if (this.client == null) {
       return;
     }
-    this.client.setex(key, expiration, JSON.stringify(data));
+    this.client.set(key, JSON.stringify(data), 'EX', expiration);
   }
 }
 
