@@ -1,7 +1,5 @@
-const redis = require('redis');
-
 class RedisConnection {
-  constructor(url) {
+  constructor(redis, url) {
     this.client = redis.createClient(url);
   }
 

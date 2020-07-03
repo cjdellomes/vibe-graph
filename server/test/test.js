@@ -1,9 +1,19 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+const redisMock = require('redis-mock');
 const app = require('../app');
 const spotify = require('../spotifyController');
+const RedisConnection = require('../RedisConnection');
 
 chai.use(chaiHttp);
+
+describe('RedisConnection', () => {
+  it('should create the client connection', () => {
+    const url = 'https://localhost:6379';
+    const mockConnection = new RedisConnection(redisMock, url);
+    chai.assert.notEqual(mockConnection.client, null);
+  });
+});
 
 describe('SpotifyController', () => {
   describe('getToken', () => {
