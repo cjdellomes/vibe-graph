@@ -1,9 +1,20 @@
 class RedisConnection {
   constructor(redis, url) {
-    this.client = redis.createClient(url);
+    if (redis == null) {
+      this.client = null;
+    } else {
+      this.client = redis.createClient(url);
+    }
   }
 
   connectApp(app) {
+    if (this.client == null) {
+      app.set('cacheConnected', false);
+      return;
+    }
+
+    app.set('cacheConnected', true);
+
     this.client.on('connect', () => {
       console.log('cache connect');
       app.set('cacheConnected', true);
@@ -23,11 +34,13 @@ class RedisConnection {
   }
 
   async get(key) {
+    if (this.client == null) {
+      return null;
+    }
+
     const promise = new Promise((resolve, reject) => {
       this.client.get(key, (err, data) => {
         if (err) {
-          console.log(err);
-          console.log(data);
           reject(err);
         } else {
           resolve(JSON.parse(data));
@@ -43,11 +56,10 @@ class RedisConnection {
   }
 
   setex(key, expiration, data) {
-    this.client.setex(
-      key,
-      expiration,
-      JSON.stringify(data),
-    );
+    if (this.client == null) {
+      return;
+    }
+    this.client.setex(key, expiration, JSON.stringify(data));
   }
 }
 

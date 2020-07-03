@@ -12,14 +12,17 @@ const searchRouter = require('./routes/search');
 const relatedArtistsRouter = require('./routes/relatedArtists');
 
 const app = express();
-const redisConnection = new RedisConnection(redis, process.env.REDIS_URL || 'redis://localhost:6379');
+const redisConnection = new RedisConnection(
+  redis,
+  process.env.REDIS_URL || 'redis://localhost:6379',
+);
+app.set('cacheConnected', false);
+app.set('cache', redisConnection);
 redisConnection.connectApp(app);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(enforce.HTTPS({ trustProtoHeader: true }));
 }
-
-app.set('cache', redisConnection);
 
 app.use(logger('dev'));
 app.use(express.json());
