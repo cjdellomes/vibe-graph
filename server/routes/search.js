@@ -3,33 +3,50 @@ const spotify = require('../spotifyController');
 
 const router = express.Router();
 
-router.param('artist', async (req, res, next, artistName) => {
-  const token = await spotify.getToken();
-  const artist = await spotify.getFirstArtist(artistName, token);
-  req.artist = artist;
+router.get('/:searchValue', async (req, res) => {
+  const cacheConnected = req.app.get('cacheConnected');
+  const cache = req.app.get('cache');
+  const { searchValue } = req.params;
 
-  if (artist == null) {
-    req.relatedArtists = null;
-    return next();
+  if (cacheConnected) {
+    const cacheData = await cache.get(searchValue);
+
+    if (cacheData != null) {
+      res.status(200);
+      res.send(cacheData);
+      return;
+    }
   }
 
-  const artistID = artist.id;
-  const relatedArtists = await spotify.getRelatedArtists(artistID, token);
-  req.relatedArtists = relatedArtists;
+  const token = await spotify.getToken();
+  const artist = await spotify.getFirstArtist(searchValue, token);
 
-  return next();
-});
-
-router.get('/:artist', (req, res) => {
-  if (req.artist == null) {
+  if (artist == null) {
     res.status(404);
     res.send('Not Found');
     return;
   }
 
+  const artistID = artist.id;
+  const relatedArtists = await spotify.getRelatedArtists(artistID, token);
+
+  if (cacheConnected) {
+    cache.setex(
+      searchValue,
+      3600,
+      {
+        source: 'cache',
+        artist,
+        related_artists: relatedArtists,
+      },
+    );
+  }
+
+  res.status(200);
   res.send({
-    artist: req.artist,
-    related_artists: req.relatedArtists,
+    source: 'api',
+    artist,
+    related_artists: relatedArtists,
   });
 });
 

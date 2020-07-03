@@ -19,11 +19,13 @@
     "http-errors": "~1.6.3",
     "mocha": "^7.1.2",
     "morgan": "~1.9.1",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "redis": "^3.0.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.4",
-    "nyc": "^15.1.0"
+    "nyc": "^15.1.0",
+    "redis-mock": "^0.49.0"
   },
   "engines": {
     "node": "12.16.3"
