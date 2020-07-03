@@ -12,6 +12,7 @@ router.get('/:artistID', async (req, res) => {
     const cacheData = await cache.get(artistID);
 
     if (cacheData != null) {
+      res.status(200);
       res.send(cacheData);
       return;
     }
@@ -37,6 +38,7 @@ router.get('/:artistID', async (req, res) => {
     );
   }
 
+  res.status(200);
   res.send({
     source: 'api',
     related_artists: relatedArtists,

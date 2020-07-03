@@ -12,6 +12,7 @@ router.get('/:searchValue', async (req, res) => {
     const cacheData = await cache.get(searchValue);
 
     if (cacheData != null) {
+      res.status(200);
       res.send(cacheData);
       return;
     }
@@ -41,6 +42,7 @@ router.get('/:searchValue', async (req, res) => {
     );
   }
 
+  res.status(200);
   res.send({
     source: 'api',
     artist,

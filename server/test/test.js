@@ -10,23 +10,23 @@ chai.use(chaiHttp);
 
 describe('RedisConnection', () => {
   it('should create the client connection', () => {
-    const url = 'http://localhost:6379';
-    const mockConnection = new RedisConnection(redisMock, url);
-    chai.assert.notEqual(mockConnection.client, null);
+    const url = 'redis://localhost:6379';
+    const mockRedisConnection = new RedisConnection(redisMock, url);
+    chai.assert.notEqual(mockRedisConnection.client, null);
   });
   it('should create a null client connection given a null redis package', () => {
-    const url = 'http://localhost:6379';
-    const mockConnection = new RedisConnection(null, url);
-    chai.assert.equal(mockConnection.client, null);
+    const url = 'redis://localhost:6379';
+    const mockRedisConnection = new RedisConnection(null, url);
+    chai.assert.equal(mockRedisConnection.client, null);
   });
   it('should set the cache connected status in the app settings to true', () => {
     const mockApp = express();
     mockApp.set('cacheConnected', false);
 
-    const url = 'http://localhost:6379';
-    const mockConnection = new RedisConnection(redisMock, url);
+    const url = 'redis://localhost:6379';
+    const mockRedisConnection = new RedisConnection(redisMock, url);
 
-    mockConnection.connectApp(mockApp);
+    mockRedisConnection.connectApp(mockApp);
 
     chai.assert.equal(mockApp.settings.cacheConnected, true);
   });
@@ -34,54 +34,54 @@ describe('RedisConnection', () => {
     const mockApp = express();
     mockApp.set('cacheConnected', false);
 
-    const url = 'http://localhost:6379';
-    const mockConnection = new RedisConnection(null, url);
+    const url = 'redis://localhost:6379';
+    const mockRedisConnection = new RedisConnection(null, url);
 
-    mockConnection.connectApp(mockApp);
+    mockRedisConnection.connectApp(mockApp);
 
     chai.assert.equal(mockApp.settings.cacheConnected, false);
   });
   it('should get the existing key value pair', async () => {
-    const url = 'http://localhost:6379';
-    const mockConnection = new RedisConnection(redisMock, url);
+    const url = 'redis://localhost:6379';
+    const mockRedisConnection = new RedisConnection(redisMock, url);
     const mockObject = {
       abc: 'blah',
     };
 
-    mockConnection.client.flushdb();
-    mockConnection.client.set('test', JSON.stringify(mockObject));
+    mockRedisConnection.client.flushdb();
+    mockRedisConnection.client.set('test', JSON.stringify(mockObject));
 
-    const val = await mockConnection.get('test');
+    const val = await mockRedisConnection.get('test');
 
     chai.assert.deepEqual(mockObject, val);
   });
   it('should return null when getting non existing key value pair', async () => {
-    const url = 'http://localhost:6379';
-    const mockConnection = new RedisConnection(redisMock, url);
+    const url = 'redis://localhost:6379';
+    const mockRedisConnection = new RedisConnection(redisMock, url);
 
-    mockConnection.client.flushdb();
-    const val = await mockConnection.get('test');
+    mockRedisConnection.client.flushdb();
+    const val = await mockRedisConnection.get('test');
 
     chai.assert.equal(val, null);
   });
   it('should return null when the client is not connected', async () => {
-    const url = 'http://localhost:6379';
-    const mockConnection = new RedisConnection(null, url);
+    const url = 'redis://localhost:6379';
+    const mockRedisConnection = new RedisConnection(null, url);
 
-    const val = await mockConnection.get('test');
+    const val = await mockRedisConnection.get('test');
 
     chai.assert.equal(val, null);
   });
   it('should set the key value pair with an expiration', () => {
-    const url = 'http://localhost:6379';
-    const mockConnection = new RedisConnection(redisMock, url);
+    const url = 'redis://localhost:6379';
+    const mockRedisConnection = new RedisConnection(redisMock, url);
     const mockObject = {
       abc: 'blah',
     };
 
-    mockConnection.client.flushdb();
-    mockConnection.setex('test', 3600, mockObject);
-    mockConnection.client.get('test', (err, data) => {
+    mockRedisConnection.client.flushdb();
+    mockRedisConnection.setex('test', 3600, mockObject);
+    mockRedisConnection.client.get('test', (err, data) => {
       chai.assert.deepEqual(JSON.stringify(mockObject), data);
     });
   });
@@ -210,6 +210,68 @@ describe('App', () => {
         .get(`/related-artists/${artistID}`)
         .end((err, res) => {
           chai.assert.equal(res.status, 400);
+          done();
+        });
+    });
+  });
+  describe('GET with cache', () => {
+    it('should get the search data from the cache', (done) => {
+      const artistID = 'test';
+      const url = 'redis://localhost:6379';
+      const mockRedisConnection = new RedisConnection(redisMock, url);
+      const mockObject = {
+        source: 'cache',
+        artist: {
+          id: 'zzz',
+          name: 'qqq',
+        },
+        related_artists: [
+          {
+            id: 'abc',
+            name: 'def',
+          },
+        ],
+      };
+
+      app.set('cache', mockRedisConnection);
+      mockRedisConnection.connectApp(app);
+      mockRedisConnection.client.flushdb();
+      mockRedisConnection.setex('test', 3600, mockObject);
+
+      chai
+        .request(app)
+        .get(`/search/${artistID}`)
+        .end((err, res) => {
+          chai.assert.equal(res.status, 200);
+          chai.assert.deepEqual(res.body, mockObject);
+          done();
+        });
+    });
+    it('should get the related artist from the cache', (done) => {
+      const artistID = 'test';
+      const url = 'redis://localhost:6379';
+      const mockRedisConnection = new RedisConnection(redisMock, url);
+      const mockObject = {
+        source: 'cache',
+        related_artists: [
+          {
+            id: 'abc',
+            name: 'def',
+          },
+        ],
+      };
+
+      app.set('cache', mockRedisConnection);
+      mockRedisConnection.connectApp(app);
+      mockRedisConnection.client.flushdb();
+      mockRedisConnection.setex('test', 3600, mockObject);
+
+      chai
+        .request(app)
+        .get(`/related-artists/${artistID}`)
+        .end((err, res) => {
+          chai.assert.equal(res.status, 200);
+          chai.assert.deepEqual(res.body, mockObject);
           done();
         });
     });
