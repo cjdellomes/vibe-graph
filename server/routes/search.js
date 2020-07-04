@@ -6,7 +6,12 @@ const router = express.Router();
 router.get('/:searchValue', async (req, res) => {
   const cacheConnected = req.app.get('cacheConnected');
   const cache = req.app.get('cache');
-  const { searchValue } = req.params;
+
+  // casing does not matter when using Spotify Web API search endpoint
+  // so, we lower case the search value to consolidate the cache key value pairs
+  // otherwise, 2 search strings with different casings would be different keys
+  // with the same associated value, thus storing duplicate data unnecessarily
+  const searchValue = req.params.searchValue.toLowerCase();
 
   if (cacheConnected) {
     const cacheData = await cache.get(searchValue);
