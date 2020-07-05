@@ -155,8 +155,7 @@ describe('App', () => {
         .end((err, res) => {
           chai.assert.equal(res.status, 200);
           chai.assert.typeOf(res.body, 'object');
-          chai.assert.equal(res.body.artists.href, 'https://api.spotify.com/v1/search?query=flor&type=artist&offset=0&limit=20');
-          chai.assert.equal(res.body.artists.items.length, 20);
+          chai.assert.equal(res.body.artists.length, 20);
           done();
         });
     });
@@ -166,10 +165,7 @@ describe('App', () => {
         .request(app)
         .get(`/search/${artist}`)
         .end((err, res) => {
-          chai.assert.equal(res.status, 200);
-          chai.assert.typeOf(res.body, 'object');
-          chai.assert.equal(res.body.artists.href, 'https://api.spotify.com/v1/search?query=aksdghjkasghadjksghjklasdbgnjksdabgasdghjkasdhgeuf&type=artist&offset=0&limit=20');
-          chai.assert.equal(res.body.artists.items.length, 0);
+          chai.assert.equal(res.status, 404);
           done();
         });
     });
