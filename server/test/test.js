@@ -14,10 +14,10 @@ describe('RedisConnection', () => {
     const mockRedisConnection = new RedisConnection(redisMock, url);
     chai.assert.notEqual(mockRedisConnection.client, null);
   });
-  it('should create a null client connection given a null redis package', () => {
+  it('should throw an exception given a null redis package', () => {
     const url = 'redis://localhost:6379';
-    const mockRedisConnection = new RedisConnection(null, url);
-    chai.assert.equal(mockRedisConnection.client, null);
+    const f = () => new RedisConnection(null, url);
+    chai.expect(f).to.throw(Error, 'Redis client creation error');
   });
   it('should set the cache connected status in the app settings to true', () => {
     const mockApp = express();
@@ -29,17 +29,6 @@ describe('RedisConnection', () => {
     mockRedisConnection.connectApp(mockApp);
 
     chai.assert.equal(mockApp.settings.cacheConnected, true);
-  });
-  it('should set the cache connected status in the app settings to false when the client is null', () => {
-    const mockApp = express();
-    mockApp.set('cacheConnected', false);
-
-    const url = 'redis://localhost:6379';
-    const mockRedisConnection = new RedisConnection(null, url);
-
-    mockRedisConnection.connectApp(mockApp);
-
-    chai.assert.equal(mockApp.settings.cacheConnected, false);
   });
   it('should get the existing key value pair', async () => {
     const url = 'redis://localhost:6379';
@@ -60,14 +49,6 @@ describe('RedisConnection', () => {
     const mockRedisConnection = new RedisConnection(redisMock, url);
 
     mockRedisConnection.client.flushdb();
-    const val = await mockRedisConnection.get('test');
-
-    chai.assert.equal(val, null);
-  });
-  it('should return null when the client is not connected', async () => {
-    const url = 'redis://localhost:6379';
-    const mockRedisConnection = new RedisConnection(null, url);
-
     const val = await mockRedisConnection.get('test');
 
     chai.assert.equal(val, null);

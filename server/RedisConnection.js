@@ -1,18 +1,14 @@
 class RedisConnection {
   constructor(redis, url) {
-    if (redis == null) {
-      this.client = null;
-    } else {
+    try {
       this.client = redis.createClient(url);
+    } catch (e) {
+      console.error(e);
+      throw new Error('Redis client creation error');
     }
   }
 
   connectApp(app) {
-    if (this.client == null) {
-      app.set('cacheConnected', false);
-      return;
-    }
-
     app.set('cacheConnected', true);
 
     this.client.on('connect', () => {
@@ -34,10 +30,6 @@ class RedisConnection {
   }
 
   async get(key) {
-    if (this.client == null) {
-      return null;
-    }
-
     const promise = new Promise((resolve, reject) => {
       this.client.get(key, (err, data) => {
         if (err) {
@@ -51,14 +43,11 @@ class RedisConnection {
     return promise
       .then((data) => data)
       .catch((error) => {
-        console.error('get error: ', error);
+        console.error('cache get error: ', error);
       });
   }
 
   setex(key, expiration, data) {
-    if (this.client == null) {
-      return;
-    }
     this.client.setex(key, expiration, JSON.stringify(data));
   }
 }
