@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unused-state */
 import React from 'react';
 import Graph from 'react-graph-vis';
-import { Modal, Card } from 'react-bootstrap';
+import { Modal, Card, Button } from 'react-bootstrap';
 import ArtistForm from './ArtistForm';
 import ArtistGraphHelper from '../helpers/ArtistGraph';
 
@@ -140,9 +140,11 @@ class App extends React.Component {
           <Card.Img
             src={ArtistGraphHelper.getArtistImageUrlOrDefault(artist)}
           />
-          <Card.ImgOverlay>
-            <Card.Title className="text-center">{artist.name}</Card.Title>
-          </Card.ImgOverlay>
+          <Card.Body className="text-center">
+            <Button variant="success" onClick={this.handleModalClose}>
+              {artist.name}
+            </Button>
+          </Card.Body>
         </Card>
         <br />
       </div>
