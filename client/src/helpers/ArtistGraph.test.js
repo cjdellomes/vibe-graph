@@ -376,22 +376,11 @@ describe('ArtistGraphHelper', () => {
       expect(await fetchArtistSearch('aaa')).toEqual(null);
     });
 
-    it('should fetch the artist search result', async () => {
-      const mockArtist = {
-        id: 'aaa',
-        name: 'bbb',
-        images: [
-          {
-            height: 320,
-            url: 'ccc',
-            width: 320,
-          },
-        ],
-      };
-      const mockRelatedArtists = [
+    it('should fetch the artist search results', async () => {
+      const mockArtists = [
         {
           id: 'ddd',
-          name: 'eee',
+          name: 'aaa',
           images: [
             {
               height: 320,
@@ -402,7 +391,7 @@ describe('ArtistGraphHelper', () => {
         },
         {
           id: 'ggg',
-          name: 'hhh',
+          name: 'a',
           images: [
             {
               height: 320,
@@ -412,17 +401,12 @@ describe('ArtistGraphHelper', () => {
           ],
         },
       ];
-      const mockFetchResponse = {
-        artist: mockArtist,
-        related_artists: mockRelatedArtists,
-      };
 
       fetch.mockResponseOnce(JSON.stringify({
-        artist: mockArtist,
-        related_artists: mockRelatedArtists,
+        artists: mockArtists,
       }));
 
-      expect(await fetchArtistSearch('aaa')).toMatchObject(mockFetchResponse);
+      expect(await fetchArtistSearch('aaa')).toEqual(expect.arrayContaining(mockArtists));
     });
 
     it('should fetch a null object given an erroneous related artists fetch response', async () => {

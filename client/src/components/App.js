@@ -1,26 +1,32 @@
+/* eslint-disable react/no-unused-state */
 import React from 'react';
-import './App.css';
 import Graph from 'react-graph-vis';
+import { Modal } from 'react-bootstrap';
 import ArtistForm from './ArtistForm';
 import ArtistGraphHelper from '../helpers/ArtistGraph';
+
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.handleModalClose = this.handleModalClose.bind(this);
     this.handleArtistChange = this.handleArtistChange.bind(this);
     this.handleGraphReset = this.handleGraphReset.bind(this);
     this.handleArtistSubmit = this.handleArtistSubmit.bind(this);
     this.handleNodeClick = this.handleNodeClick.bind(this);
 
     this.state = {
+      showModal: false,
       searchValue: '',
+      searchResults: [],
       graph: {
         nodes: [],
         edges: [],
         nodeSet: new Set(),
         edgeSet: new Set(),
       },
-      searchedArtists: new Set(),
       loadedArtists: new Set(),
       graphOptions: {
         autoResize: true,
@@ -56,6 +62,10 @@ class App extends React.Component {
     };
   }
 
+  handleModalClose() {
+    this.setState({ showModal: false });
+  }
+
   handleArtistChange(searchValue) {
     this.setState({ searchValue });
   }
@@ -63,13 +73,13 @@ class App extends React.Component {
   handleGraphReset() {
     this.setState({
       searchValue: '',
+      searchResults: [],
       graph: {
         nodes: [],
         edges: [],
         nodeSet: new Set(),
         edgeSet: new Set(),
       },
-      searchedArtists: new Set(),
       loadedArtists: new Set(),
     });
   }
@@ -111,55 +121,23 @@ class App extends React.Component {
   }
 
   async handleArtistSubmit(searchValue) {
-    const { loadedArtists, searchedArtists } = this.state;
+    this.setState({ showModal: true });
 
-    if (searchedArtists.has(searchValue)) {
-      return;
-    }
-
-    searchedArtists.add(searchValue);
-
-    const searchResult = await ArtistGraphHelper.fetchArtistSearch(searchValue);
-    if (searchResult == null) {
-      return;
-    }
-
-    const { artist } = searchResult;
-    const relatedArtists = searchResult.related_artists;
-
-    if (loadedArtists.has(artist.id)) {
-      return;
-    }
-
-    loadedArtists.add(artist.id);
-
-    const { graph } = this.state;
-    const {
-      nodes, edges, nodeSet, edgeSet,
-    } = graph;
-
-    const graphCopy = {
-      nodes: Array.from(nodes),
-      edges: Array.from(edges),
-      nodeSet: new Set(nodeSet),
-      edgeSet: new Set(edgeSet),
-    };
-
-    ArtistGraphHelper.addArtistToGraph(graphCopy, artist);
-    ArtistGraphHelper.addRelatedArtistsToGraph(
-      graphCopy,
-      artist.id,
-      relatedArtists,
+    const searchResults = await ArtistGraphHelper.fetchArtistSearch(
+      searchValue,
     );
+    if (searchResults == null) {
+      return;
+    }
 
     this.setState({
-      graph: graphCopy,
+      searchResults,
     });
   }
 
   render() {
     const {
-      searchValue, graph, graphOptions, events,
+      showModal, searchValue, graph, graphOptions, events,
     } = this.state;
     return (
       // eslint-disable-next-line react/jsx-filename-extension
@@ -173,6 +151,15 @@ class App extends React.Component {
         <div className="fullscreen">
           <Graph graph={graph} options={graphOptions} events={events} />
         </div>
+        <Modal show={showModal} onHide={this.handleModalClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>
+              Artists Matching
+              {` ${searchValue}`}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>test</Modal.Body>
+        </Modal>
       </div>
     );
   }

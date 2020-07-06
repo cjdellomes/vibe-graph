@@ -111,7 +111,7 @@ class ArtistGraphHelper {
     return fetch(`/search/${encodeURIComponent(artistName)}`)
       .then((res) => res.json())
       .then(
-        (result) => result,
+        (result) => result.artists,
       )
       .catch((error) => {
         console.error('error in fetching artist search results: ', error);
