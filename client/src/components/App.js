@@ -15,6 +15,7 @@ class App extends React.Component {
     this.handleArtistChange = this.handleArtistChange.bind(this);
     this.handleGraphReset = this.handleGraphReset.bind(this);
     this.handleArtistSubmit = this.handleArtistSubmit.bind(this);
+    this.handleArtistSelect = this.handleArtistSelect.bind(this);
     this.handleNodeClick = this.handleNodeClick.bind(this);
 
     this.state = {
@@ -86,6 +87,47 @@ class App extends React.Component {
     });
   }
 
+  async handleArtistSelect(artistID) {
+    const { searchResults, loadedArtists } = this.state;
+    const artist = searchResults.find((a) => a.id === artistID);
+
+    if (artist == null || loadedArtists.has(artist.id)) {
+      this.setState({
+        showModal: false,
+      });
+      return;
+    }
+
+    const relatedArtists = await ArtistGraphHelper.fetchRelatedArtists(
+      artist.id,
+    );
+
+    const { graph } = this.state;
+    const { nodes, edges } = graph;
+    const { nodeSet, edgeSet } = graph;
+
+    const graphCopy = {
+      nodes: Array.from(nodes),
+      edges: Array.from(edges),
+      nodeSet: new Set(nodeSet),
+      edgeSet: new Set(edgeSet),
+    };
+
+    ArtistGraphHelper.addArtistToGraph(graphCopy, artist);
+    ArtistGraphHelper.addRelatedArtistsToGraph(
+      graphCopy,
+      artist.id,
+      relatedArtists,
+    );
+
+    this.setState({
+      graph: graphCopy,
+      showModal: false,
+    });
+
+    loadedArtists.add(artist.id);
+  }
+
   async handleNodeClick(event) {
     const artistNodeID = event.nodes[0];
     const { loadedArtists } = this.state;
@@ -93,8 +135,6 @@ class App extends React.Component {
     if (loadedArtists.has(artistNodeID)) {
       return;
     }
-
-    loadedArtists.add(artistNodeID);
 
     const relatedArtists = await ArtistGraphHelper.fetchRelatedArtists(
       artistNodeID,
@@ -119,11 +159,14 @@ class App extends React.Component {
     this.setState({
       graph: graphCopy,
     });
+
+    loadedArtists.add(artistNodeID);
   }
 
   async handleArtistSubmit(searchValue) {
     this.setState({
       showModal: true,
+      searchResults: [],
       searchResultCards: [],
     });
 
@@ -141,7 +184,10 @@ class App extends React.Component {
             src={ArtistGraphHelper.getArtistImageUrlOrDefault(artist)}
           />
           <Card.Body className="text-center">
-            <Button variant="success" onClick={this.handleModalClose}>
+            <Button
+              variant="success"
+              onClick={() => this.handleArtistSelect(artist.id)}
+            >
               {artist.name}
             </Button>
           </Card.Body>
