@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unused-state */
 import React from 'react';
 import Graph from 'react-graph-vis';
-import { Modal } from 'react-bootstrap';
+import { Modal, Card } from 'react-bootstrap';
 import ArtistForm from './ArtistForm';
 import ArtistGraphHelper from '../helpers/ArtistGraph';
 
@@ -21,6 +21,7 @@ class App extends React.Component {
       showModal: false,
       searchValue: '',
       searchResults: [],
+      searchResultCards: [],
       graph: {
         nodes: [],
         edges: [],
@@ -74,6 +75,7 @@ class App extends React.Component {
     this.setState({
       searchValue: '',
       searchResults: [],
+      searchResultCards: [],
       graph: {
         nodes: [],
         edges: [],
@@ -98,9 +100,8 @@ class App extends React.Component {
       artistNodeID,
     );
     const { graph } = this.state;
-    const {
-      nodes, edges, nodeSet, edgeSet,
-    } = graph;
+    const { nodes, edges } = graph;
+    const { nodeSet, edgeSet } = graph;
 
     const graphCopy = {
       nodes: Array.from(nodes),
@@ -121,7 +122,10 @@ class App extends React.Component {
   }
 
   async handleArtistSubmit(searchValue) {
-    this.setState({ showModal: true });
+    this.setState({
+      showModal: true,
+      searchResultCards: [],
+    });
 
     const searchResults = await ArtistGraphHelper.fetchArtistSearch(
       searchValue,
@@ -130,14 +134,34 @@ class App extends React.Component {
       return;
     }
 
+    const searchResultCards = searchResults.map((artist) => (
+      <div key={artist.id}>
+        <Card>
+          <Card.Img
+            src={ArtistGraphHelper.getArtistImageUrlOrDefault(artist)}
+          />
+          <Card.ImgOverlay>
+            <Card.Title className="text-center">{artist.name}</Card.Title>
+          </Card.ImgOverlay>
+        </Card>
+        <br />
+      </div>
+    ));
+
     this.setState({
       searchResults,
+      searchResultCards,
     });
   }
 
   render() {
     const {
-      showModal, searchValue, graph, graphOptions, events,
+      showModal,
+      searchValue,
+      searchResultCards,
+      graph,
+      graphOptions,
+      events,
     } = this.state;
     return (
       // eslint-disable-next-line react/jsx-filename-extension
@@ -153,12 +177,16 @@ class App extends React.Component {
         </div>
         <Modal show={showModal} onHide={this.handleModalClose}>
           <Modal.Header closeButton>
-            <Modal.Title>
-              Artists Matching
-              {` ${searchValue}`}
-            </Modal.Title>
+            <Modal.Title>Click an artist</Modal.Title>
           </Modal.Header>
-          <Modal.Body>test</Modal.Body>
+          <Modal.Body
+            style={{
+              'max-height': '87vh',
+              'overflow-y': 'auto',
+            }}
+          >
+            {searchResultCards}
+          </Modal.Body>
         </Modal>
       </div>
     );

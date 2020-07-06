@@ -46,6 +46,8 @@ describe('App', () => {
 
     expect(component.state('showModal')).toBe(false);
     expect(component.state('searchValue')).toBe('');
+    expect(component.state('searchResults').length).toBe(0);
+    expect(component.state('searchResultCards').length).toBe(0);
     expect(component.state('graph').nodes.length).toBe(0);
     expect(component.state('graph').edges.length).toBe(0);
     expect(component.state('graph').nodeSet.size).toBe(0);
@@ -105,7 +107,10 @@ describe('App', () => {
 
     component.instance().handleGraphReset();
 
+    expect(component.state('showModal')).toBe(false);
     expect(component.state('searchValue')).toBe('');
+    expect(component.state('searchResults').length).toBe(0);
+    expect(component.state('searchResultCards').length).toBe(0);
     expect(component.state('graph').nodes.length).toBe(0);
     expect(component.state('graph').edges.length).toBe(0);
     expect(component.state('graph').nodeSet.size).toBe(0);

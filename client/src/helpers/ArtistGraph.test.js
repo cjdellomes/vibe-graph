@@ -30,7 +30,7 @@ describe('ArtistGraphHelper', () => {
           },
         ],
       };
-      expect(getArtistImageUrlOrDefault(mockArtist, '')).toBe('test2.png');
+      expect(getArtistImageUrlOrDefault(mockArtist, '')).toBe('test.png');
     });
 
     it('gets an empty string from artist object with empty image list', () => {
