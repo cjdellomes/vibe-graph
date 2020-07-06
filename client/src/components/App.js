@@ -181,14 +181,7 @@ class App extends React.Component {
           <Modal.Header closeButton>
             <Modal.Title>Select an Artist</Modal.Title>
           </Modal.Header>
-          <Modal.Body
-            style={{
-              'max-height': '87vh',
-              'overflow-y': 'auto',
-            }}
-          >
-            {searchResultCards}
-          </Modal.Body>
+          <Modal.Body id="modal-body">{searchResultCards}</Modal.Body>
         </Modal>
       </div>
     );
