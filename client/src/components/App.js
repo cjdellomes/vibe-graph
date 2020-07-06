@@ -179,7 +179,7 @@ class App extends React.Component {
         </div>
         <Modal show={showModal} onHide={this.handleModalClose}>
           <Modal.Header closeButton>
-            <Modal.Title>Click an artist</Modal.Title>
+            <Modal.Title>Select an Artist</Modal.Title>
           </Modal.Header>
           <Modal.Body
             style={{
