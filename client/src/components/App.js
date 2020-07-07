@@ -1,26 +1,34 @@
+/* eslint-disable react/no-unused-state */
 import React from 'react';
-import './App.css';
 import Graph from 'react-graph-vis';
+import { Modal, Card, Button } from 'react-bootstrap';
 import ArtistForm from './ArtistForm';
 import ArtistGraphHelper from '../helpers/ArtistGraph';
+
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.handleModalClose = this.handleModalClose.bind(this);
     this.handleArtistChange = this.handleArtistChange.bind(this);
     this.handleGraphReset = this.handleGraphReset.bind(this);
     this.handleArtistSubmit = this.handleArtistSubmit.bind(this);
+    this.handleArtistSelect = this.handleArtistSelect.bind(this);
     this.handleNodeClick = this.handleNodeClick.bind(this);
 
     this.state = {
+      showModal: false,
       searchValue: '',
+      searchResults: [],
+      searchResultCards: [],
       graph: {
         nodes: [],
         edges: [],
         nodeSet: new Set(),
         edgeSet: new Set(),
       },
-      searchedArtists: new Set(),
       loadedArtists: new Set(),
       graphOptions: {
         autoResize: true,
@@ -56,6 +64,10 @@ class App extends React.Component {
     };
   }
 
+  handleModalClose() {
+    this.setState({ showModal: false });
+  }
+
   handleArtistChange(searchValue) {
     this.setState({ searchValue });
   }
@@ -63,80 +75,36 @@ class App extends React.Component {
   handleGraphReset() {
     this.setState({
       searchValue: '',
+      searchResults: [],
+      searchResultCards: [],
       graph: {
         nodes: [],
         edges: [],
         nodeSet: new Set(),
         edgeSet: new Set(),
       },
-      searchedArtists: new Set(),
       loadedArtists: new Set(),
     });
   }
 
-  async handleNodeClick(event) {
-    const artistNodeID = event.nodes[0];
-    const { loadedArtists } = this.state;
+  async handleArtistSelect(artistID) {
+    const { searchResults, loadedArtists } = this.state;
+    const artist = searchResults.find((a) => a.id === artistID);
 
-    if (loadedArtists.has(artistNodeID)) {
+    if (artist == null || loadedArtists.has(artist.id)) {
+      this.setState({
+        showModal: false,
+      });
       return;
     }
-
-    loadedArtists.add(artistNodeID);
 
     const relatedArtists = await ArtistGraphHelper.fetchRelatedArtists(
-      artistNodeID,
-    );
-    const { graph } = this.state;
-    const {
-      nodes, edges, nodeSet, edgeSet,
-    } = graph;
-
-    const graphCopy = {
-      nodes: Array.from(nodes),
-      edges: Array.from(edges),
-      nodeSet: new Set(nodeSet),
-      edgeSet: new Set(edgeSet),
-    };
-
-    ArtistGraphHelper.addRelatedArtistsToGraph(
-      graphCopy,
-      artistNodeID,
-      relatedArtists,
+      artist.id,
     );
 
-    this.setState({
-      graph: graphCopy,
-    });
-  }
-
-  async handleArtistSubmit(searchValue) {
-    const { loadedArtists, searchedArtists } = this.state;
-
-    if (searchedArtists.has(searchValue)) {
-      return;
-    }
-
-    searchedArtists.add(searchValue);
-
-    const searchResult = await ArtistGraphHelper.fetchArtistSearch(searchValue);
-    if (searchResult == null) {
-      return;
-    }
-
-    const { artist } = searchResult;
-    const relatedArtists = searchResult.related_artists;
-
-    if (loadedArtists.has(artist.id)) {
-      return;
-    }
-
-    loadedArtists.add(artist.id);
-
     const { graph } = this.state;
-    const {
-      nodes, edges, nodeSet, edgeSet,
-    } = graph;
+    const { nodes, edges } = graph;
+    const { nodeSet, edgeSet } = graph;
 
     const graphCopy = {
       nodes: Array.from(nodes),
@@ -154,12 +122,91 @@ class App extends React.Component {
 
     this.setState({
       graph: graphCopy,
+      showModal: false,
+    });
+
+    loadedArtists.add(artist.id);
+  }
+
+  async handleNodeClick(event) {
+    const artistNodeID = event.nodes[0];
+    const { loadedArtists } = this.state;
+
+    if (loadedArtists.has(artistNodeID)) {
+      return;
+    }
+
+    const relatedArtists = await ArtistGraphHelper.fetchRelatedArtists(
+      artistNodeID,
+    );
+    const { graph } = this.state;
+    const { nodes, edges } = graph;
+    const { nodeSet, edgeSet } = graph;
+
+    const graphCopy = {
+      nodes: Array.from(nodes),
+      edges: Array.from(edges),
+      nodeSet: new Set(nodeSet),
+      edgeSet: new Set(edgeSet),
+    };
+
+    ArtistGraphHelper.addRelatedArtistsToGraph(
+      graphCopy,
+      artistNodeID,
+      relatedArtists,
+    );
+
+    this.setState({
+      graph: graphCopy,
+    });
+
+    loadedArtists.add(artistNodeID);
+  }
+
+  async handleArtistSubmit(searchValue) {
+    this.setState({
+      showModal: true,
+      searchResults: [],
+      searchResultCards: [],
+    });
+
+    const searchResults = await ArtistGraphHelper.fetchArtistSearch(
+      searchValue,
+    );
+    if (searchResults == null) {
+      return;
+    }
+
+    const searchResultCards = searchResults.map((artist) => (
+      <div key={artist.id}>
+        <Card>
+          <Card.Img
+            className="artist-card-image"
+            src={ArtistGraphHelper.getArtistImageUrlOrDefault(artist)}
+            onClick={() => this.handleArtistSelect(artist.id)}
+          />
+          <Button className="btn text-center" variant="success" onClick={() => this.handleArtistSelect(artist.id)}>
+            {artist.name}
+          </Button>
+        </Card>
+        <hr />
+      </div>
+    ));
+
+    this.setState({
+      searchResults,
+      searchResultCards,
     });
   }
 
   render() {
     const {
-      searchValue, graph, graphOptions, events,
+      showModal,
+      searchValue,
+      searchResultCards,
+      graph,
+      graphOptions,
+      events,
     } = this.state;
     return (
       // eslint-disable-next-line react/jsx-filename-extension
@@ -173,6 +220,12 @@ class App extends React.Component {
         <div className="fullscreen">
           <Graph graph={graph} options={graphOptions} events={events} />
         </div>
+        <Modal show={showModal} onHide={this.handleModalClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Select an Artist</Modal.Title>
+          </Modal.Header>
+          <Modal.Body id="modal-body">{searchResultCards}</Modal.Body>
+        </Modal>
       </div>
     );
   }

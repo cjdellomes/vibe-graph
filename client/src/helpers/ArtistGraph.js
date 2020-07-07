@@ -1,7 +1,7 @@
 class ArtistGraphHelper {
   static getArtistImageUrlOrDefault(artist, defaultVal) {
     if (artist.images.length > 0) {
-      return artist.images[artist.images.length - 1].url;
+      return artist.images[0].url;
     }
     return defaultVal;
   }
@@ -111,7 +111,7 @@ class ArtistGraphHelper {
     return fetch(`/search/${encodeURIComponent(artistName)}`)
       .then((res) => res.json())
       .then(
-        (result) => result,
+        (result) => result.artists,
       )
       .catch((error) => {
         console.error('error in fetching artist search results: ', error);

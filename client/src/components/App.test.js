@@ -44,7 +44,10 @@ describe('App', () => {
 
     const component = shallow(<App />);
 
+    expect(component.state('showModal')).toBe(false);
     expect(component.state('searchValue')).toBe('');
+    expect(component.state('searchResults').length).toBe(0);
+    expect(component.state('searchResultCards').length).toBe(0);
     expect(component.state('graph').nodes.length).toBe(0);
     expect(component.state('graph').edges.length).toBe(0);
     expect(component.state('graph').nodeSet.size).toBe(0);
@@ -61,6 +64,15 @@ describe('App', () => {
     expect(component.state('searchValue')).toBe('');
     component.instance().handleArtistChange('abcdef');
     expect(component.state('searchValue')).toBe('abcdef');
+  });
+
+  it('should close the modal when handleModalClose is called', () => {
+    const component = shallow(<App />);
+    component.instance().setState({
+      showModal: true,
+    });
+    component.instance().handleModalClose();
+    expect(component.state('showModal')).toBe(false);
   });
 
   it('resets the graph when the handleGraphReset is called', () => {
@@ -104,7 +116,10 @@ describe('App', () => {
 
     component.instance().handleGraphReset();
 
+    expect(component.state('showModal')).toBe(false);
     expect(component.state('searchValue')).toBe('');
+    expect(component.state('searchResults').length).toBe(0);
+    expect(component.state('searchResultCards').length).toBe(0);
     expect(component.state('graph').nodes.length).toBe(0);
     expect(component.state('graph').edges.length).toBe(0);
     expect(component.state('graph').nodeSet.size).toBe(0);
@@ -254,7 +269,92 @@ describe('App', () => {
     expect(component.state('loadedArtists').size).toBe(2);
   });
 
-  it('should not do anything if the searched artist has already has already been searched', async () => {
+  it('should reset the search results and show the modal if no search results are found handleArtistSubmit is called', async () => {
+    const mockFetchArtistSearch = jest.fn();
+    mockFetchArtistSearch.mockReturnValue(null);
+
+    ArtistGraphHelper.fetchArtistSearch = mockFetchArtistSearch;
+
+    const component = shallow(<App />);
+
+    await component.instance().handleArtistSubmit('aaa');
+
+    expect(component.state('showModal')).toBe(true);
+    expect(component.state('searchResults').length).toBe(0);
+    expect(component.state('searchResultCards').length).toBe(0);
+  });
+
+  it('should fetch artist search results handleArtistSubmit is called', async () => {
+    const mockSearchResults = [
+      {
+        id: 'ddd',
+        name: 'aaa',
+        images: [
+          {
+            height: 320,
+            url: 'fff',
+            width: 320,
+          },
+        ],
+      },
+      {
+        id: 'ggg',
+        name: 'a',
+        images: [
+          {
+            height: 320,
+            url: 'iii',
+            width: 320,
+          },
+        ],
+      },
+    ];
+    const mockFetchArtistSearch = jest.fn();
+    mockFetchArtistSearch.mockReturnValue(mockSearchResults);
+
+    ArtistGraphHelper.fetchArtistSearch = mockFetchArtistSearch;
+
+    const component = shallow(<App />);
+
+    await component.instance().handleArtistSubmit('aaa');
+
+    expect(component.state('showModal')).toBe(true);
+    expect(component.state('searchResults')).toBe(mockSearchResults);
+  });
+
+  it('should close the modal if the artist ID is not found in the search results when handleArtistSelect is called', async () => {
+    const component = shallow(<App />);
+
+    component.instance().setState({
+      searchResults: [],
+      showModal: true,
+    });
+
+    await component.instance().handleArtistSelect('aaa');
+
+    expect(component.state('showModal')).toBe(false);
+    expect(component.state('graph').nodes.length).toBe(0);
+    expect(component.state('graph').edges.length).toBe(0);
+    expect(component.state('graph').nodeSet.size).toBe(0);
+    expect(component.state('graph').edgeSet.size).toBe(0);
+    expect(component.state('loadedArtists').size).toBe(0);
+  });
+
+  it('should close the modal if the artist ID is already loaded when handleArtistSelect is called', async () => {
+    const mockSearchResults = [
+      {
+        id: 'aaa',
+        name: 'bbb',
+        images: [
+          {
+            height: 320,
+            url: 'ccc',
+            width: 320,
+          },
+        ],
+      },
+    ];
+
     const mockGraph = {
       nodes: [
         {
@@ -282,31 +382,30 @@ describe('App', () => {
       nodeSet: new Set(['abc', 'gasdgasdgasdg']),
       edgeSet: new Set(['abc:gasdgasdgasdg']),
     };
-    const mockLoadedArtists = new Set(['abc', 'gasdgasdgasdg']);
-    const mockSearchedArtists = new Set(['abc']);
+    const mockLoadedArtists = new Set(['abc']);
 
     const component = shallow(<App />);
+
     component.instance().setState({
-      searchValue: 'abc',
       graph: mockGraph,
-      searchedArtists: mockSearchedArtists,
+      searchResults: mockSearchResults,
       loadedArtists: mockLoadedArtists,
+      showModal: true,
     });
 
-    await component.instance().handleArtistSubmit('abc');
+    await component.instance().handleArtistSelect('abc');
 
-    expect(component.state('searchValue')).toBe('abc');
+    expect(component.state('showModal')).toBe(false);
     expect(component.state('graph').nodes.length).toBe(2);
     expect(component.state('graph').edges.length).toBe(1);
     expect(component.state('graph').nodeSet.size).toBe(2);
     expect(component.state('graph').edgeSet.size).toBe(1);
-    expect(component.state('loadedArtists').size).toBe(2);
+    expect(component.state('loadedArtists').size).toBe(1);
   });
 
-  it('should not change the graph if the searched artist has already has already been loaded', async () => {
-    const mockFetchArtistSearch = jest.fn();
-    mockFetchArtistSearch.mockReturnValue({
-      artist: {
+  it('should fetch the related artists before updating the graph when handleArtistSelect is called', async () => {
+    const mockSearchResults = [
+      {
         id: 'aaa',
         name: 'bbb',
         images: [
@@ -317,289 +416,32 @@ describe('App', () => {
           },
         ],
       },
-      related_artists: [
-        {
-          id: 'ddd',
-          name: 'eee',
-          images: [
-            {
-              height: 320,
-              url: 'fff',
-              width: 320,
-            },
-          ],
-        },
-        {
-          id: 'ggg',
-          name: 'hhh',
-          images: [
-            {
-              height: 320,
-              url: 'iii',
-              width: 320,
-            },
-          ],
-        },
-      ],
-    });
-
-    const mockAddArtistToGraph = jest.fn();
-    mockAddArtistToGraph.mockImplementation((graph, artist) => {
-      const artistNode = {
-        id: artist.id,
-        label: artist.name,
-        title: artist.name,
-        shape: 'circularImage',
-        image: artist.images[0].url,
-      };
-
-      graph.nodes.push(artistNode);
-      graph.nodeSet.add(artistNode.id);
-    });
-
-    const mockAddRelatedArtistsToGraph = jest.fn();
-    mockAddRelatedArtistsToGraph.mockImplementation(
-      (graph, artistNodeID, relatedArtists) => {
-        for (let i = 0; i < relatedArtists.length; i += 1) {
-          const relatedArtist = relatedArtists[i];
-
-          const relatedArtistNode = {
-            id: relatedArtist.id,
-            label: relatedArtist.name,
-            title: relatedArtist.name,
-            shape: 'circularImage',
-            image: relatedArtist.images[0].url,
-          };
-          const relatedArtistEdge = {
-            id: `${artistNodeID}:${relatedArtistNode.id}`,
-            from: `${artistNodeID}`,
-            to: relatedArtistNode,
-          };
-
-          graph.nodes.push(relatedArtistNode);
-          graph.edges.push(relatedArtistEdge);
-          graph.nodeSet.add(relatedArtistNode.id);
-          graph.edgeSet.add(relatedArtistEdge.id);
-        }
-      },
-    );
-
-    const mockGraph = {
-      nodes: [
-        {
-          id: 'aaa',
-          label: 'bbb',
-          title: 'bbb',
-          shape: 'circularImage',
-          image: 'ccc',
-        },
-        {
-          id: 'ddd',
-          label: 'eee',
-          title: 'eee',
-          shape: 'circularImage',
-          image: 'fff',
-        },
-        {
-          id: 'ggg',
-          label: 'hhh',
-          title: 'hhh',
-          shape: 'circularImage',
-          image: 'iii',
-        },
-      ],
-      edges: [
-        {
-          id: 'aaa:ddd',
-          from: 'aaa',
-          to: 'ddd',
-        },
-        {
-          id: 'aaa:ggg',
-          from: 'aaa',
-          to: 'ggg',
-        },
-      ],
-      nodeSet: new Set(['aaa', 'ddd', 'ggg']),
-      edgeSet: new Set(['aaa:ddd', 'aaa:ggg']),
-    };
-    const mockLoadedArtists = new Set(['aaa']);
-    const mockSearchedArtists = new Set();
-
-    ArtistGraphHelper.fetchArtistSearch = mockFetchArtistSearch;
-    ArtistGraphHelper.addArtistToGraph = mockAddArtistToGraph;
-    ArtistGraphHelper.addRelatedArtistsToGraph = mockAddRelatedArtistsToGraph;
-
-    const component = shallow(<App />);
-    component.instance().setState({
-      searchValue: 'aaa',
-      graph: mockGraph,
-      searchedArtists: mockSearchedArtists,
-      loadedArtists: mockLoadedArtists,
-    });
-
-    await component.instance().handleArtistSubmit('aaa');
-
-    expect(component.state('searchValue')).toBe('aaa');
-    expect(component.state('graph').nodes.length).toBe(3);
-    expect(component.state('graph').edges.length).toBe(2);
-    expect(component.state('graph').nodeSet.size).toBe(3);
-    expect(component.state('graph').edgeSet.size).toBe(2);
-    expect(component.state('loadedArtists').size).toBe(1);
-    expect(mockAddArtistToGraph).toHaveBeenCalledTimes(0);
-    expect(mockAddRelatedArtistsToGraph).toHaveBeenCalledTimes(0);
-  });
-
-  it('should not change the graph if the searched artist result is null', async () => {
-    const mockFetchArtistSearch = jest.fn();
-    mockFetchArtistSearch.mockReturnValue(null);
-
-    const mockAddArtistToGraph = jest.fn();
-    mockAddArtistToGraph.mockImplementation((graph, artist) => {
-      const artistNode = {
-        id: artist.id,
-        label: artist.name,
-        title: artist.name,
-        shape: 'circularImage',
-        image: artist.images[0].url,
-      };
-
-      graph.nodes.push(artistNode);
-      graph.nodeSet.add(artistNode.id);
-    });
-
-    const mockAddRelatedArtistsToGraph = jest.fn();
-    mockAddRelatedArtistsToGraph.mockImplementation(
-      (graph, artistNodeID, relatedArtists) => {
-        for (let i = 0; i < relatedArtists.length; i += 1) {
-          const relatedArtist = relatedArtists[i];
-
-          const relatedArtistNode = {
-            id: relatedArtist.id,
-            label: relatedArtist.name,
-            title: relatedArtist.name,
-            shape: 'circularImage',
-            image: relatedArtist.images[0].url,
-          };
-          const relatedArtistEdge = {
-            id: `${artistNodeID}:${relatedArtistNode.id}`,
-            from: `${artistNodeID}`,
-            to: relatedArtistNode,
-          };
-
-          graph.nodes.push(relatedArtistNode);
-          graph.edges.push(relatedArtistEdge);
-          graph.nodeSet.add(relatedArtistNode.id);
-          graph.edgeSet.add(relatedArtistEdge.id);
-        }
-      },
-    );
-
-    const mockGraph = {
-      nodes: [
-        {
-          id: 'aaa',
-          label: 'bbb',
-          title: 'bbb',
-          shape: 'circularImage',
-          image: 'ccc',
-        },
-        {
-          id: 'ddd',
-          label: 'eee',
-          title: 'eee',
-          shape: 'circularImage',
-          image: 'fff',
-        },
-        {
-          id: 'ggg',
-          label: 'hhh',
-          title: 'hhh',
-          shape: 'circularImage',
-          image: 'iii',
-        },
-      ],
-      edges: [
-        {
-          id: 'aaa:ddd',
-          from: 'aaa',
-          to: 'ddd',
-        },
-        {
-          id: 'aaa:ggg',
-          from: 'aaa',
-          to: 'ggg',
-        },
-      ],
-      nodeSet: new Set(['aaa', 'ddd', 'ggg']),
-      edgeSet: new Set(['aaa:ddd', 'aaa:ggg']),
-    };
-    const mockLoadedArtists = new Set(['aaa']);
-    const mockSearchedArtists = new Set();
-
-    ArtistGraphHelper.fetchArtistSearch = mockFetchArtistSearch;
-    ArtistGraphHelper.addArtistToGraph = mockAddArtistToGraph;
-    ArtistGraphHelper.addRelatedArtistsToGraph = mockAddRelatedArtistsToGraph;
-
-    const component = shallow(<App />);
-    component.instance().setState({
-      searchValue: 'aaa',
-      graph: mockGraph,
-      searchedArtists: mockSearchedArtists,
-      loadedArtists: mockLoadedArtists,
-    });
-
-    await component.instance().handleArtistSubmit('aaa');
-
-    expect(component.state('searchValue')).toBe('aaa');
-    expect(component.state('graph').nodes.length).toBe(3);
-    expect(component.state('graph').edges.length).toBe(2);
-    expect(component.state('graph').nodeSet.size).toBe(3);
-    expect(component.state('graph').edgeSet.size).toBe(2);
-    expect(component.state('loadedArtists').size).toBe(1);
-    expect(mockAddArtistToGraph).toHaveBeenCalledTimes(0);
-    expect(mockAddRelatedArtistsToGraph).toHaveBeenCalledTimes(0);
-  });
-
-  it('should fetch the artist and related artists before updating the graph when handleArtistSubmit is called', async () => {
-    const mockFetchArtistSearch = jest.fn();
-    mockFetchArtistSearch.mockReturnValue({
-      artist: {
-        id: 'aaa',
-        name: 'bbb',
+    ];
+    const mockFetchRelatedArtists = jest.fn();
+    mockFetchRelatedArtists.mockReturnValue([
+      {
+        id: 'ddd',
+        name: 'eee',
         images: [
           {
             height: 320,
-            url: 'ccc',
+            url: 'fff',
             width: 320,
           },
         ],
       },
-      related_artists: [
-        {
-          id: 'ddd',
-          name: 'eee',
-          images: [
-            {
-              height: 320,
-              url: 'fff',
-              width: 320,
-            },
-          ],
-        },
-        {
-          id: 'ggg',
-          name: 'hhh',
-          images: [
-            {
-              height: 320,
-              url: 'iii',
-              width: 320,
-            },
-          ],
-        },
-      ],
-    });
+      {
+        id: 'ggg',
+        name: 'hhh',
+        images: [
+          {
+            height: 320,
+            url: 'iii',
+            width: 320,
+          },
+        ],
+      },
+    ]);
 
     const mockAddArtistToGraph = jest.fn();
     mockAddArtistToGraph.mockImplementation((graph, artist) => {
@@ -642,14 +484,20 @@ describe('App', () => {
       },
     );
 
-    ArtistGraphHelper.fetchArtistSearch = mockFetchArtistSearch;
+    ArtistGraphHelper.fetchRelatedArtists = mockFetchRelatedArtists;
     ArtistGraphHelper.addArtistToGraph = mockAddArtistToGraph;
     ArtistGraphHelper.addRelatedArtistsToGraph = mockAddRelatedArtistsToGraph;
 
     const component = shallow(<App />);
 
-    await component.instance().handleArtistSubmit('aaa');
+    component.instance().setState({
+      searchResults: mockSearchResults,
+      loadedArtists: new Set(),
+    });
 
+    await component.instance().handleArtistSelect('aaa');
+
+    expect(component.state('showModal')).toBe(false);
     expect(component.state('graph').nodes.length).toBe(3);
     expect(component.state('graph').edges.length).toBe(2);
     expect(component.state('graph').nodeSet.size).toBe(3);

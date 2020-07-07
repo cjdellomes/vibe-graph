@@ -24,16 +24,13 @@ router.get('/:searchValue', async (req, res) => {
   }
 
   const token = await spotify.getToken();
-  const artist = await spotify.getFirstArtist(searchValue, token);
+  const artists = await spotify.searchArtist(searchValue, token);
 
-  if (artist == null) {
+  if (artists.length === 0) {
     res.status(404);
     res.send('Not Found');
     return;
   }
-
-  const artistID = artist.id;
-  const relatedArtists = await spotify.getRelatedArtists(artistID, token);
 
   if (cacheConnected) {
     cache.setex(
@@ -41,8 +38,7 @@ router.get('/:searchValue', async (req, res) => {
       3600,
       {
         source: 'cache',
-        artist,
-        related_artists: relatedArtists,
+        artists,
       },
     );
   }
@@ -50,8 +46,7 @@ router.get('/:searchValue', async (req, res) => {
   res.status(200);
   res.send({
     source: 'api',
-    artist,
-    related_artists: relatedArtists,
+    artists,
   });
 });
 
