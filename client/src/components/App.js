@@ -181,18 +181,15 @@ class App extends React.Component {
       <div key={artist.id}>
         <Card>
           <Card.Img
+            className="artist-card-image"
             src={ArtistGraphHelper.getArtistImageUrlOrDefault(artist)}
+            onClick={() => this.handleArtistSelect(artist.id)}
           />
-          <Card.Body className="text-center">
-            <Button
-              variant="success"
-              onClick={() => this.handleArtistSelect(artist.id)}
-            >
-              {artist.name}
-            </Button>
-          </Card.Body>
+          <Button className="btn text-center" variant="success" onClick={() => this.handleArtistSelect(artist.id)}>
+            {artist.name}
+          </Button>
         </Card>
-        <br />
+        <hr />
       </div>
     ));
 

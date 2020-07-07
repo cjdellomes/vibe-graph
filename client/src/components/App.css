@@ -12,3 +12,7 @@
   max-height: 87vh;
   overflow-y: auto;
 }
+
+.artist-card-image {
+  cursor: pointer;
+}
