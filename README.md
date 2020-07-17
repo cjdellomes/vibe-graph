@@ -15,7 +15,7 @@ You can search for multiple artists and reset the graph to a blank slate at any 
 
 ## Cloning and Installing
 
-You'll need [Node](https://nodejs.org/en/) and [Git](https://git-scm.com/) installed on your machine.
+You'll need [Node](https://nodejs.org/en/) and [Git](https://git-scm.com/) installed on your machine. Optionally, install and run a [Redis](https://redis.io/) instance to use as a cache.
 
 To use the app locally, first clone the repo
 
@@ -74,4 +74,4 @@ The frontend was built using [React](https://reactjs.org/) while the backend was
 
 The graph is rendered using [vis.js](http://visjs.org) and, more sepcifically, the [react-graph-vis](https://www.npmjs.com/package/react-graph-vis) npm package.
 
-Most of the styling is based on the [Wikipedia Map](https://github.com/controversial/wikipedia-map) project by [Luke Deen Taylor](https://luke.deentaylor.com/#).
+Partially inspired by the [Wikipedia Map](https://github.com/controversial/wikipedia-map) project by [Luke Deen Taylor](https://luke.deentaylor.com/#).
