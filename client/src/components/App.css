@@ -14,5 +14,10 @@
 }
 
 .artist-card-image {
+  border-radius: 0 !important;
   cursor: pointer;
+}
+
+.btn.text-center {
+  border-radius: 0 !important;
 }
