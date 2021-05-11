@@ -7,7 +7,7 @@
     "cli-cursor": "^3.1.0",
     "iconv-lite": "^0.4.24",
     "json-schema-traverse": "^0.4.1",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "mimic-fn": "^2.1.0",
     "minimatch": "^3.0.4",
     "minimist": "^1.2.5",
